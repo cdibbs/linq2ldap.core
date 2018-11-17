@@ -97,11 +97,11 @@ After the LDAP test server is running, you can use the other pane to run integra
 dotnet test .\Linq2Ldap.IntegrationTest\
 ```
 
-[banner]: https://github.com/cdibbs/linq2ldap/blob/master/resources/header.svg "The only way to discover the limits of the possible is to go beyond them into the impossible. - Arthur C. Clarke"
-[1]: https://github.com/cdibbs/linq2ldap/blob/master/Linq2Ldap/Specification.cs#L42
-[travisimg]: https://travis-ci.org/cdibbs/linq2ldap.svg?branch=master
-[travislink]: https://travis-ci.org/cdibbs/linq2ldap
-[appveyorimg]: https://ci.appveyor.com/api/projects/status/i8u7bshsqw63wj7e?svg=true
-[appveyorlink]: https://ci.appveyor.com/project/cdibbs/linq2ldap
-[codecovimg]: https://codecov.io/gh/cdibbs/linq2ldap/branch/master/graph/badge.svg
-[codecovlink]: https://codecov.io/gh/cdibbs/linq2ldap
+[banner]: https://github.com/cdibbs/linq2ldap.core/blob/master/resources/header.svg "The only way to discover the limits of the possible is to go beyond them into the impossible. - Arthur C. Clarke"
+[1]: https://github.com/cdibbs/linq2ldap.core/blob/master/Linq2Ldap.Core/Specification.cs#L42
+[travisimg]: https://travis-ci.org/cdibbs/linq2ldap.core.svg?branch=master
+[travislink]: https://travis-ci.org/cdibbs/linq2ldap.core
+[appveyorimg]: https://ci.appveyor.com/api/projects/status/3snlupymajawn2pv?svg=true
+[appveyorlink]: https://ci.appveyor.com/project/cdibbs/linq2ldap.core
+[codecovimg]: https://codecov.io/gh/cdibbs/linq2ldap.core/branch/master/graph/badge.svg
+[codecovlink]: https://codecov.io/gh/cdibbs/linq2ldap.core
