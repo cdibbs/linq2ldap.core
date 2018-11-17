@@ -1,0 +1,54 @@
+version: '1.0.{build}'
+image: Visual Studio 2017
+# https://dotnetcore.gaprogman.com/2017/06/08/continuous-integration-and-appveyor/
+branches:
+  only:
+  - master
+
+init:
+  # Good practise, because Windows line endings are different from Unix/Linux ones
+  - cmd: git config --global core.autocrlf true
+
+install:
+  # install modules
+  - ps: | 
+      cd e2e-helpers
+      npm install
+
+before_build:
+  # Display .NET Core version
+  - cmd: dotnet --version
+  # Start LDAP test server
+  - ps: |
+      $MyProcess = Start-Process npm -ArgumentList 'run serve'
+      cd ..
+  # Display minimal restore text
+  - cmd: dotnet restore ./Linq2Ldap.Core.sln --verbosity m
+
+build_script:
+  # output will be in ./src/bin/debug/netcoreapp1.1/publish
+  - cmd: dotnet publish ./Linq2Ldap.Core.sln
+
+test_script:
+  - ps: dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=./ Linq2Ldap.Core.sln
+
+after_test:
+  - ps: |
+      $env:PATH = 'C:\msys64\usr\bin;' + $env:PATH
+      Invoke-WebRequest -Uri 'https://codecov.io/bash' -OutFile codecov.sh
+      bash codecov.sh -f "*.Tests/coverage.opencover.xml"
+  - dotnet pack ./Linq2Ldap.Core/ -c Release
+
+artifacts:
+  - name: linq2ldap.core
+    path: ./Linq2Ldap.Core/bin/Release/*.nupkg
+    type: NuGetPackage
+
+deploy:
+  - provider: NuGet
+    server: https://www.myget.org/F/cdibbs-dev/api/v2/package
+    api_key:
+      secure: Mf32sYawJIMVZ3+MzLd+7dl0TgQN2yAwfWS43+h0mhn7RqDS1dPGuO0Vv1HkZKmF
+    skip_symbols: false
+    symbol_server:           # remove to push symbols to SymbolSource.org
+    artifact: linq2ldap.core
