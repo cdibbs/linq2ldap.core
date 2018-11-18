@@ -5,6 +5,7 @@ using Linq2Ldap.Core.Attributes;
 using Linq2Ldap.Core.Models;
 using Linq2Ldap.Core.Proxies;
 using Linq2Ldap.Core.Types;
+using Linq2Ldap.Core.Util;
 
 namespace Linq2Ldap.Core {
     public class ModelCreator: IModelCreator {
@@ -86,13 +87,17 @@ namespace Linq2Ldap.Core {
             where T: IEntry
         {
             var ptype = prop.PropertyType;
-            Type[] genArgs = ptype.BaseType.GetGenericArguments();
-            Type ldapType;
+            Type[] genArgs = ptype.BaseType
+                .GetGenericArguments()
+                .Where(a => !a.IsGenericParameter)
+                .ToArray(); ;
+            Type[] baseLdapTypes = new[] {
+                typeof(BaseLdapManyType<,>),
+                typeof(BaseLdapType<,>) };
             if (ptype.BaseType.IsGenericType
-                && genArgs.Count() == 2
-                && (ldapType = typeof(BaseLdapManyType<,>)
-                    .MakeGenericType(genArgs))
-                    .IsAssignableFrom(ptype))
+                && baseLdapTypes.Any(t =>
+                    genArgs.Count() == t.GetGenericArguments().Count()
+                    && TypesUtility.CanMakeGenericTypeAssignableFrom(t, genArgs, ptype)))
             {
                 if (ldapFieldData == null) {
                     prop.SetValue(model, null);
@@ -104,7 +109,7 @@ namespace Linq2Ldap.Core {
                 prop.SetValue(model, inst);
                 return;
             }
-            
+
             if (ldapFieldData == null || ldapFieldData.Count == 0) {
                 prop.SetValue(model, null);
                 return;

@@ -11,6 +11,8 @@ namespace Linq2Ldap.Core.Proxies
         : List<object>, IEquatable<string>, ILdapComparable<string>
     {
         public PropertyValueCollection(): base() {}
+        public PropertyValueCollection(params object[] objects) : base(objects) { }
+        public PropertyValueCollection(params string[] objects) : base(objects) { }
         public PropertyValueCollection(IEnumerable proxyValues): base(proxyValues.Cast<object>())
         {
         }

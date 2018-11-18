@@ -8,6 +8,7 @@ using Linq2Ldap.Core.Attributes;
 using Linq2Ldap.Core.Models;
 using Linq2Ldap.Core.Proxies;
 using Linq2Ldap.Core.Types;
+using Linq2Ldap.Core.Util;
 
 namespace Linq2Ldap.Core.FilterCompiler
 {
@@ -142,26 +143,13 @@ namespace Linq2Ldap.Core.FilterCompiler
             if (decType.IsGenericType
                 && genericTypes.Any(t =>
                     genArgs.Count() == t.GetGenericArguments().Count()
-                    && CanMakeGenericTypeAssignableFrom(t, genArgs, decType))
+                    && TypesUtility.CanMakeGenericTypeAssignableFrom(t, genArgs, decType))
             ) {
                 return;
             }
 
             throw new NotImplementedException(
                 $"Linq-to-LDAP method calls not implemented for type: {decType}.");
-        }
-
-        internal bool CanMakeGenericTypeAssignableFrom(Type t, Type[] genArgs, Type from)
-        {
-            // Per Skeet, here: https://stackoverflow.com/a/4864565/2356600
-            try
-            {
-                return t.MakeGenericType(genArgs).IsAssignableFrom(from);
-            }
-            catch
-            {
-                return false;
-            }
         }
 
         internal string __PDictIndexToString(

@@ -3,7 +3,7 @@ using Linq2Ldap.Core.Proxies;
 
 namespace Linq2Ldap.Core.Types
 {
-    public abstract class BaseLdapType<T, TConv>: ILdapComparable<T>
+    public abstract class BaseLdapType<T, TConv>: ILdapComparable<T>, IEquatable<T>
         where T: IComparable
         where TConv : class, IConverter<T>
     {
@@ -46,6 +46,7 @@ namespace Linq2Ldap.Core.Types
         protected abstract int _CompareTo(object b);
 
         public IntList CompareTo(T b) => _CompareTo(b);
+        public bool Equals(T b) => _CompareTo(b) == 0;
 
         public override string ToString() {
             return Raw.Count > 0 ? Raw[0].ToString() : null;

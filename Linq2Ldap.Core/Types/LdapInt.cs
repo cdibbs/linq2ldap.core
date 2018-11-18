@@ -7,7 +7,11 @@ using System.Collections.Generic;
 namespace Linq2Ldap.Core.Types {
     public class LdapInt : BaseLdapType<int, IntConverter>
     {
-        public LdapInt(PropertyValueCollection raw) : base(raw, new IntConverter())
+        public LdapInt(PropertyValueCollection raw): base(raw, new IntConverter())
+        {
+        }
+
+        public LdapInt(PropertyValueCollection raw, IntConverter conv): base(raw, conv)
         {
         }
 
