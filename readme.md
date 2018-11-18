@@ -44,7 +44,7 @@ For more information about models and properties, please visit the [Wiki](https:
 ## Additional abstractions
 
 Wrappers around some of the search functionality in System.DirectoryServices and System.DirectoryServices.Protocols
-exist here. These include, for example, `LinqDirectorySearcher<T>` and `LinqSearchRequest<T>`, respectively.
+can be found, [here][deps]. These include, for example, `LinqDirectorySearcher<T>` and `LinqSearchRequest<T>`, respectively.
 
 # Development setup
 
@@ -67,3 +67,4 @@ If not using Visual Studio Code, please see .vscode/tasks.json for examples to r
 [appveyorlink]: https://ci.appveyor.com/project/cdibbs/linq2ldap-core
 [codecovimg]: https://codecov.io/gh/cdibbs/linq2ldap.core/branch/master/graph/badge.svg
 [codecovlink]: https://codecov.io/gh/cdibbs/linq2ldap.core
+[deps]: https://github.com/cdibbs/linq2ldap
