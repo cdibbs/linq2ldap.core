@@ -128,7 +128,7 @@ namespace Linq2Ldap.Core.FilterCompiler
                 typeof(Linq2Ldap.Core.Models.Entry),
                 typeof(Linq2Ldap.Core.Models.IEntry)
             };
-            if (simpleTypes.Contains(decType)) {
+            if (simpleTypes.Any(t => t.IsAssignableFrom(decType))) {
                 return;
             }
 
