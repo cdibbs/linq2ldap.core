@@ -185,7 +185,7 @@ namespace Linq2Ldap.Core.FilterParser
             where T: IEntry
         {
             // TODO: If a field exists dedicated to this property access, use that, instead.
-            var mi = typeof(Entry).GetProperties()
+            var mi = typeof(T).GetProperties()
                 .Where(p => p.GetIndexParameters().Any())
                 .Select(p => p.GetGetMethod());
             return Expression.Call(paramExpr, mi.First(), Expression.Constant(left.Text));

@@ -4,6 +4,8 @@ using Linq2Ldap.Core.Models;
 using System.Collections.Generic;
 using Linq2Ldap.Core.Proxies;
 using Linq2Ldap.Core.FilterCompiler;
+using System.Linq.Expressions;
+using System;
 
 namespace Linq2Ldap.Core.Tests.FilterParser {
     public class ParserTests {
@@ -126,5 +128,25 @@ namespace Linq2Ldap.Core.Tests.FilterParser {
             var filter = compiler.Compile(expr);
             Assert.Equal(expected, filter);
         }
+
+        [Fact]
+        public void BuildPropertyExpr_UsesCustomModelRef()
+        {
+            var filter = "(mail=something)";
+            var expr = Parser.Parse<CustomEntry>(filter);
+            var dict = new Dictionary<string, PropertyValueCollection>()
+            {
+                { "mail", new PropertyValueCollection("something") }
+            };
+            expr.Compile()(new CustomEntry() { Attributes = new DirectoryEntryPropertyCollection(dict) });
+        }
+    }
+
+    public class CustomEntry : IEntry
+    {
+        public PropertyValueCollection this[string key] => Attributes[key];
+        public string DistinguishedName { get; set; }
+        public DirectoryEntryPropertyCollection Attributes { get; set; }
+        public bool Has(string attrName) => Attributes.ContainsKey(attrName);
     }
 }

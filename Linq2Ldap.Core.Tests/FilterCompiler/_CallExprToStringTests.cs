@@ -55,6 +55,11 @@ namespace Linq2Ldap.Core.Tests.FilterCompiler
                 },
                 new object[]
                 {
+                    (Expression<Func<TestLdapModel, bool>>) ((TestLdapModel u) => u["samaccountname"].Contains("c")),
+                    "(samaccountname=*c*)"
+                },
+                new object[]
+                {
                     (Expression<Func<TestLdapModel, bool>>) ((TestLdapModel u) => u.SamAccountName.Contains("test")),
                     "(samaccountname=*test*)"
                 },
