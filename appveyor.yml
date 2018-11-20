@@ -7,26 +7,16 @@ branches:
 
 dotnet_csproj:
   patch: true
-  file: 'Linq2Ldap.Core\Linq2Ldap.csproj'
+  file: 'Linq2Ldap.Core\Linq2Ldap.Core.csproj'
   package_version: '{version}'
 
 init:
   # Good practise, because Windows line endings are different from Unix/Linux ones
   - cmd: git config --global core.autocrlf true
 
-install:
-  # install modules
-  - ps: | 
-      cd e2e-helpers
-      npm install
-
 before_build:
   # Display .NET Core version
   - cmd: dotnet --version
-  # Start LDAP test server
-  - ps: |
-      $MyProcess = Start-Process npm -ArgumentList 'run serve'
-      cd ..
   # Display minimal restore text
   - cmd: dotnet restore ./Linq2Ldap.Core.sln --verbosity m
 
