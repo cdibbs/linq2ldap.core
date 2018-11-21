@@ -18,7 +18,7 @@ env:
 
 script:
   - cd Linq2Ldap.Core.Tests
-  - dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=lcov /p:CoverletOutputFormat=opencover /p:CoverletOutput=./ Linq2Ldap.Core.Tests.csproj
+  - dotnet test Linq2Ldap.Core.Tests.csproj
 
 
 #addons:

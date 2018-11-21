@@ -9,11 +9,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Linq2Ldap.Core", "Linq2Ldap
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A6B80FC1-0D29-4973-A783-26E3421D03CE}"
 	ProjectSection(SolutionItems) = preProject
+		.travis.yml = .travis.yml
 		appveyor.yml = appveyor.yml
 		readme.md = readme.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Linq2Ldap.Core.IntegrationTest", "Linq2Ldap.Core.IntegrationTest\Linq2Ldap.Core.IntegrationTest.csproj", "{89E40006-2B95-4001-9D54-56781AEE8C7C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Linq2Ldap.Core.IntegrationTest", "Linq2Ldap.Core.IntegrationTest\Linq2Ldap.Core.IntegrationTest.csproj", "{89E40006-2B95-4001-9D54-56781AEE8C7C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

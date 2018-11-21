@@ -45,6 +45,7 @@ namespace Linq2Ldap.Core.Tests.PublicAPI
         public void Compiler_CanUseCustomBaseModel()
         {
             Expression<Func<CustomEntry, bool>> expr = e => e["mail"] == "example@example.com";
+            // No Exceptions implies it correctly used the custom entry type.
             var result = Compiler.Compile(expr);
             Assert.Equal("(mail=example@example.com)", result);
         }
