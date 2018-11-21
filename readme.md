@@ -48,7 +48,7 @@ can be found, [here][deps]. These include, for example, `LinqDirectorySearcher<T
 
 ## Contributing
 
-We accept [donations] and pull requests!
+Do you appreciate the hard work that went into this software? We accept [donations]!
 
 [banner]: https://github.com/cdibbs/linq2ldap.core/blob/master/resources/header.svg "The only way to discover the limits of the possible is to go beyond them into the impossible. - Arthur C. Clarke"
 [1]: https://github.com/cdibbs/linq2ldap.core/blob/master/Linq2Ldap.Core/Specification.cs#L42
