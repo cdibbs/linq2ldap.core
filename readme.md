@@ -46,7 +46,7 @@ For more information about models and properties, please visit the [Wiki](https:
 Wrappers around some of the search functionality in System.DirectoryServices and System.DirectoryServices.Protocols
 can be found, [here][deps]. These include, for example, `LinqDirectorySearcher<T>` and `LinqSearchRequest<T>`, respectively.
 
-# Contributing
+## Contributing
 
 We accept [donations] and pull requests!
 
