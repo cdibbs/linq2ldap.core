@@ -46,18 +46,9 @@ For more information about models and properties, please visit the [Wiki](https:
 Wrappers around some of the search functionality in System.DirectoryServices and System.DirectoryServices.Protocols
 can be found, [here][deps]. These include, for example, `LinqDirectorySearcher<T>` and `LinqSearchRequest<T>`, respectively.
 
-# Development setup
+# Contributing
 
-Visual Studio Code, Visual Studio Community, and the .NET Core toolkit were used in the development of this library.
-
-## Code coverage 
-
-To setup free code coverage analysis in VS Code, see this:
-
-https://medium.com/bluekiri/code-coverage-in-vsts-with-xunit-coverlet-and-reportgenerator-be2a64cd9c2f
-
-If not using Visual Studio Code, please see .vscode/tasks.json for examples to run the build and tests.
-
+We accept [donations] and pull requests!
 
 [banner]: https://github.com/cdibbs/linq2ldap.core/blob/master/resources/header.svg "The only way to discover the limits of the possible is to go beyond them into the impossible. - Arthur C. Clarke"
 [1]: https://github.com/cdibbs/linq2ldap.core/blob/master/Linq2Ldap.Core/Specification.cs#L42
@@ -68,3 +59,4 @@ If not using Visual Studio Code, please see .vscode/tasks.json for examples to r
 [codecovimg]: https://codecov.io/gh/cdibbs/linq2ldap.core/branch/master/graph/badge.svg
 [codecovlink]: https://codecov.io/gh/cdibbs/linq2ldap.core
 [deps]: https://github.com/cdibbs/linq2ldap
+[donations]: https://cdibbs.github.io/foss-giving
