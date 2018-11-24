@@ -3,13 +3,19 @@ using Linq2Ldap.Core.Proxies;
 
 namespace Linq2Ldap.Core.Types
 {
+    /// <summary>
+    /// Facilitates conversion from an AttributeValueList to a type T so that classes
+    /// deriving from this type can be used in Expressions over IEntry implementations.
+    /// </summary>
+    /// <typeparam name="T">An IComparable type converted from an AttributeValueList.</typeparam>
+    /// <typeparam name="TConv">A converter that takes an AttributeValueList and makes a T.</typeparam>
     public abstract class BaseLdapType<T, TConv>: ILdapComparable<T>, IEquatable<T>
         where T: IComparable
         where TConv : class, IConverter<T>
     {
-        internal protected PropertyValueCollection Raw { get; set; }
+        internal protected AttributeValueList Raw { get; set; }
         internal protected T Converted { get; set; }
-        public BaseLdapType(PropertyValueCollection raw, TConv conv) 
+        public BaseLdapType(AttributeValueList raw, TConv conv) 
         {
             this.Raw = raw;
             this.Converted = conv.Convert(Raw);

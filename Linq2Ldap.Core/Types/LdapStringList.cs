@@ -8,12 +8,12 @@ namespace Linq2Ldap.Core.Types
 {
     public class LdapStringList : BaseLdapManyType<string, StringListConverter>
     {
-        public LdapStringList(PropertyValueCollection raw)
+        public LdapStringList(AttributeValueList raw)
             : this(raw, new StringListConverter())
         {
         }
 
-        public LdapStringList(PropertyValueCollection raw, StringListConverter conv)
+        public LdapStringList(AttributeValueList raw, StringListConverter conv)
             : base(raw, conv)
         {
         }

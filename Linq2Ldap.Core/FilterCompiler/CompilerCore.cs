@@ -122,8 +122,8 @@ namespace Linq2Ldap.Core.FilterCompiler
         internal void AssertValidUnderlyingType(Type decType) {
             var simpleTypes = new Type[] {
                 typeof(string),
-                typeof(Linq2Ldap.Core.Proxies.PropertyValueCollection),
-                typeof(Dictionary<string, PropertyValueCollection>),
+                typeof(Linq2Ldap.Core.Proxies.AttributeValueList),
+                typeof(Dictionary<string, AttributeValueList>),
                 typeof(Linq2Ldap.Core.ExtensionMethods.PropertyExtensions),
                 typeof(Linq2Ldap.Core.Models.Entry),
                 typeof(Linq2Ldap.Core.Models.IEntry)

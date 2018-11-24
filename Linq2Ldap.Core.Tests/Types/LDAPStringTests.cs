@@ -8,7 +8,7 @@ namespace Linq2Ldap.Core.Tests.Types {
         [Fact]
         public void ImplicitToString_ReturnsOriginal() {
             var testStr = "something";
-            var test = new LdapString(new PropertyValueCollection(new List<object>(){ testStr }));
+            var test = new LdapString(new AttributeValueList(new List<object>(){ testStr }));
             string result = test;
             Assert.Equal(testStr, result);
         }

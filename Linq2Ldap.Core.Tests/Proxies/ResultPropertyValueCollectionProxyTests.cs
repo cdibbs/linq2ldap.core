@@ -9,13 +9,13 @@ namespace Linq2Ldap.Core.Tests.Proxies
 
         [Fact]
         public void Constructor_ThrowsOnNull() {
-            Assert.Throws<ArgumentNullException>(() => new Core.Proxies.PropertyValueCollection((List<object>)null));
+            Assert.Throws<ArgumentNullException>(() => new Core.Proxies.AttributeValueList((List<object>)null));
         }
 
         [Fact]
         public void Enumerator_Enumerates() {
             var m = new List<object>() { "a", "b", "c" };
-            var p = new Core.Proxies.PropertyValueCollection(m);
+            var p = new Core.Proxies.AttributeValueList(m);
             var i = 0;
             foreach (var e in p) {
                 Assert.Equal(e, m[i++]);
@@ -26,7 +26,7 @@ namespace Linq2Ldap.Core.Tests.Proxies
         [Fact]
         public void GenericEnumerator_SameAsNonGeneric() {
             var m = new List<object>() { "a", "b", "c" };
-            var p = new Core.Proxies.PropertyValueCollection(m);
+            var p = new Core.Proxies.AttributeValueList(m);
             var i = 0;
             foreach (var e in (p as IEnumerable)) {
                 Assert.Equal(e, m[i++]);
@@ -38,7 +38,7 @@ namespace Linq2Ldap.Core.Tests.Proxies
         [InlineData(new string[] { "b" }, new int[] { 0 })]
         [Theory]
         public void CompareTo_ReturnsListOfResults(string[] s, int[] expected) {
-            Core.Proxies.PropertyValueCollection p = s;
+            Core.Proxies.AttributeValueList p = s;
             Assert.Equal(expected, p.CompareTo("b"));
         }
 
@@ -48,7 +48,7 @@ namespace Linq2Ldap.Core.Tests.Proxies
         [InlineData(new string[] { "b" }, "c", false)]
         [Theory]
         public void Equals_ReturnsTrueWhenEqual(string[] s, string test, bool expected) {
-            Core.Proxies.PropertyValueCollection p = s;
+            Core.Proxies.AttributeValueList p = s;
             Assert.Equal(expected, p.Equals(test));
         }
 
@@ -58,7 +58,7 @@ namespace Linq2Ldap.Core.Tests.Proxies
         [InlineData(new string[] { "b" }, "c", true)]
         [Theory]
         public void NotEquals_ReturnsTrueWhenNotEqual(string[] s, string test, bool expected) {
-            Core.Proxies.PropertyValueCollection p = s;
+            Core.Proxies.AttributeValueList p = s;
             Assert.Equal(expected, p != test);
         }      
 
@@ -72,13 +72,13 @@ namespace Linq2Ldap.Core.Tests.Proxies
         [InlineData(new string[] { "b" }, "c", true)]
         [Theory]
         public void LessThan_ReturnsTrueWhenLT(string[] s, string test, bool expected) {
-            Core.Proxies.PropertyValueCollection p = s;
+            Core.Proxies.AttributeValueList p = s;
             Assert.Equal(expected, p < test);
         }
 
         [Fact]
         public void LessThan_Null_Throws() {
-            Core.Proxies.PropertyValueCollection p2 = null;
+            Core.Proxies.AttributeValueList p2 = null;
             Assert.Throws<ArgumentException>(() => p2 < "a");
             Assert.Throws<ArgumentException>(() => p2 < null);
         }
@@ -93,13 +93,13 @@ namespace Linq2Ldap.Core.Tests.Proxies
         [InlineData(new string[] { "b" }, "c", false)]
         [Theory]
         public void GreaterThan_ReturnsTrueWhenGT(string[] s, string test, bool expected) {
-            Core.Proxies.PropertyValueCollection p = s;
+            Core.Proxies.AttributeValueList p = s;
             Assert.Equal(expected, p > test);
         }
 
         [Fact]
         public void GreaterThan_Null_Throws() {
-            Core.Proxies.PropertyValueCollection p2 = null;
+            Core.Proxies.AttributeValueList p2 = null;
             Assert.Throws<ArgumentException>(() => p2 > "a");
             Assert.Throws<ArgumentException>(() => p2 > null);
         }
@@ -115,13 +115,13 @@ namespace Linq2Ldap.Core.Tests.Proxies
         [InlineData(new string[] { "b" }, "c", true)]
         [Theory]
         public void LessThanOrEqual_ReturnsTrueWhenLTE(string[] s, string test, bool expected) {
-            Core.Proxies.PropertyValueCollection p = s;
+            Core.Proxies.AttributeValueList p = s;
             Assert.Equal(expected, p <= test);
         }
 
         [Fact]
         public void LessThanOrEqual_Null_Throws() {
-            Core.Proxies.PropertyValueCollection p2 = null;
+            Core.Proxies.AttributeValueList p2 = null;
             Assert.Throws<ArgumentException>(() => p2 <= "a");
             Assert.Throws<ArgumentException>(() => p2 <= null);
         }
@@ -138,13 +138,13 @@ namespace Linq2Ldap.Core.Tests.Proxies
         [InlineData(new string[] { "b" }, "c", false)]
         [Theory]
         public void GreaterThanOrEqual_ReturnsTrueWhenLTE(string[] s, string test, bool expected) {
-            Core.Proxies.PropertyValueCollection p = s;
+            Core.Proxies.AttributeValueList p = s;
             Assert.Equal(expected, p >= test);
         }
 
         [Fact]
         public void GreaterThanOrEqual_Null_Throws() {
-            Core.Proxies.PropertyValueCollection p2 = null;
+            Core.Proxies.AttributeValueList p2 = null;
             Assert.Throws<ArgumentException>(() => p2 >= "a");
             Assert.Throws<ArgumentException>(() => p2 >= null);
         }
@@ -155,7 +155,7 @@ namespace Linq2Ldap.Core.Tests.Proxies
         [InlineData(new [] { "abcdef", "defghi" }, "jkl", false)]
         [Theory]
         public void StartsWith_TrueWhen(string[] s, string frag, bool expected) {
-            Core.Proxies.PropertyValueCollection p = s;
+            Core.Proxies.AttributeValueList p = s;
             Assert.Equal(expected, p.StartsWith(frag));
         }
 
@@ -165,7 +165,7 @@ namespace Linq2Ldap.Core.Tests.Proxies
         [InlineData(new [] { "abcdef", "defghi" }, "jkl", false)]
         [Theory]
         public void EndsWith_TrueWhen(string[] s, string frag, bool expected) {
-            Core.Proxies.PropertyValueCollection p = s;
+            Core.Proxies.AttributeValueList p = s;
             Assert.Equal(expected, p.EndsWith(frag));
         }
 
@@ -177,7 +177,7 @@ namespace Linq2Ldap.Core.Tests.Proxies
         [InlineData(new [] { "abcdef", "defghi" }, "fgh", true)]
         [Theory]
         public void Contains_TrueWhen(string[] s, string frag, bool expected) {
-            Core.Proxies.PropertyValueCollection p = s;
+            Core.Proxies.AttributeValueList p = s;
             Assert.Equal(expected, p.Contains(frag));
         }
     }

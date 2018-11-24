@@ -42,12 +42,12 @@ namespace Linq2Ldap.Core.Tests.FilterParser {
         [Theory]
         public void Parse_Integration_BasicBooleans(string input, bool expected) {
             var expr = Parser.Parse<Entry>(input);
-            var dict = new Dictionary<string, PropertyValueCollection>() {
-                { "a", new PropertyValueCollection(new List<object>() { "b" }) },
-                { "c", new PropertyValueCollection(new List<object>() { "d" }) },
-                { "e", new PropertyValueCollection(new List<object>() { "314" }) }
+            var dict = new Dictionary<string, AttributeValueList>() {
+                { "a", new AttributeValueList(new List<object>() { "b" }) },
+                { "c", new AttributeValueList(new List<object>() { "d" }) },
+                { "e", new AttributeValueList(new List<object>() { "314" }) }
             };
-            var entry = new Entry() { Attributes = new DirectoryEntryPropertyCollection(dict) };
+            var entry = new Entry() { Attributes = new EntryAttributeDictionary(dict) };
             Assert.Equal(expected, expr.Compile()(entry));
         }
 
@@ -58,12 +58,12 @@ namespace Linq2Ldap.Core.Tests.FilterParser {
         [Theory]
         public void Parse_Integration_ExistenceChecks(string input, bool expected) {
             var expr = Parser.Parse<Entry>(input);
-            var dict = new Dictionary<string, PropertyValueCollection>() {
-                { "a", new PropertyValueCollection(new List<object>() { "b" }) },
-                { "multiv", new PropertyValueCollection(new List<object>() { "d", "e" }) },
-                { "emptylist", new PropertyValueCollection(new List<object>() { }) }
+            var dict = new Dictionary<string, AttributeValueList>() {
+                { "a", new AttributeValueList(new List<object>() { "b" }) },
+                { "multiv", new AttributeValueList(new List<object>() { "d", "e" }) },
+                { "emptylist", new AttributeValueList(new List<object>() { }) }
             };
-            var entry = new Entry() { Attributes = new DirectoryEntryPropertyCollection(dict) };
+            var entry = new Entry() { Attributes = new EntryAttributeDictionary(dict) };
             Assert.Equal(expected, expr.Compile()(entry));
         }
 
@@ -75,11 +75,11 @@ namespace Linq2Ldap.Core.Tests.FilterParser {
         [Theory]
         public void Parse_Integration_ApproxChecks(string input, bool expected) {
             var expr = Parser.Parse<Entry>(input);
-            var dict = new Dictionary<string, PropertyValueCollection>() {
-                { "a", new PropertyValueCollection(new List<object>() { "b" }) },
-                { "c", new PropertyValueCollection(new List<object>() { "d", "e" }) },
+            var dict = new Dictionary<string, AttributeValueList>() {
+                { "a", new AttributeValueList(new List<object>() { "b" }) },
+                { "c", new AttributeValueList(new List<object>() { "d", "e" }) },
             };
-            var entry = new Entry() { Attributes = new DirectoryEntryPropertyCollection(dict) };
+            var entry = new Entry() { Attributes = new EntryAttributeDictionary(dict) };
             Assert.Equal(expected, expr.Compile()(entry));
         }
 
@@ -93,11 +93,11 @@ namespace Linq2Ldap.Core.Tests.FilterParser {
         [Theory]
         public void Parse_Integration_EscapeChecks(string input, bool expected) {
             var expr = Parser.Parse<Entry>(input);
-            var dict = new Dictionary<string, PropertyValueCollection>() {
-                { @"a=", new PropertyValueCollection(new List<object>() { "b" }) },
-                { @"c\", new PropertyValueCollection(new List<object>() { "d", "e" }) },
+            var dict = new Dictionary<string, AttributeValueList>() {
+                { @"a=", new AttributeValueList(new List<object>() { "b" }) },
+                { @"c\", new AttributeValueList(new List<object>() { "d", "e" }) },
             };
-            var entry = new Entry() { Attributes = new DirectoryEntryPropertyCollection(dict) };
+            var entry = new Entry() { Attributes = new EntryAttributeDictionary(dict) };
             Assert.Equal(expected, expr.Compile()(entry));
         }
 

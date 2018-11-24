@@ -7,7 +7,7 @@ namespace Linq2Ldap.Core.Types
 {
     public class StringConverter : IConverter<string>
     {
-        public string Convert(PropertyValueCollection values)
+        public string Convert(AttributeValueList values)
         {
             if (values.Count > 0)
             {

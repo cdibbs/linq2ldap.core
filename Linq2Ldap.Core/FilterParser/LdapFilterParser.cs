@@ -89,7 +89,7 @@ namespace Linq2Ldap.Core.FilterParser
                 var methodInfo = typeof(PropertyExtensions)
                     .GetMethod(
                         nameof(PropertyExtensions.Matches),
-                        new [] { typeof(PropertyValueCollection), typeof(string) });
+                        new [] { typeof(AttributeValueList), typeof(string) });
                 return Expression.Call(methodInfo, memberRef, Expression.Constant("*"));
             }
 
@@ -110,7 +110,7 @@ namespace Linq2Ldap.Core.FilterParser
                 var methodInfo = typeof(PropertyExtensions)
                     .GetMethod(
                         nameof(PropertyExtensions.Matches),
-                        new [] { typeof(PropertyValueCollection), typeof(string) });
+                        new [] { typeof(AttributeValueList), typeof(string) });
                 var start = tokens.ElementAt(startPos);
                 var matchAgg = tokens
                     .Skip(startPos)
@@ -171,7 +171,7 @@ namespace Linq2Ldap.Core.FilterParser
                     var methodInfo = typeof(PropertyExtensions)
                         .GetMethod(
                             nameof(PropertyExtensions.Approx),
-                            new [] { typeof(PropertyValueCollection), typeof(string) });
+                            new [] { typeof(AttributeValueList), typeof(string) });
                     return Expression.Call(methodInfo, memberRef, Expression.Constant(right.Text));
                 default:
                     throw new SyntaxException($"Unrecognized operator: {op.Text}.", op.StartPos, op.EndPos);

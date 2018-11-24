@@ -16,16 +16,24 @@ namespace Linq2Ldap.Core {
         /// <param name="dn">DistinguishedName field of this entry.</param>
         /// <typeparam name="T">The destination IEntry model type.</typeparam>
         /// <returns>A populated instance of T.</returns>
-        public T Create<T>(DirectoryEntryPropertyCollection entryProps, string dn = null)
+        public T Create<T>(EntryAttributeDictionary entryProps, string dn = null)
             where T: IEntry, new()
             => Create(new T() {
                     DistinguishedName = dn,
                     Attributes = entryProps
                 }, entryProps);
 
+        /// <summary>
+        /// Given an IEntry class, T, populate its LdapField properties from the given
+        /// collection of directory entry attributes.
+        /// </summary>
+        /// <typeparam name="T">A type implementing IEntry.</typeparam>
+        /// <param name="model">An object whose type implements IEntry.</param>
+        /// <param name="entryProps">A collection of directory entry properties and values.</param>
+        /// <returns></returns>
         public virtual T Create<T>(
             T model,
-            DirectoryEntryPropertyCollection entryProps
+            EntryAttributeDictionary entryProps
         )
             where T: IEntry
         {
@@ -42,7 +50,7 @@ namespace Linq2Ldap.Core {
         protected virtual void SetPropFromProperties<T>(
             T model,
             PropertyInfo prop,
-            DirectoryEntryPropertyCollection entryProps
+            EntryAttributeDictionary entryProps
         )
             where T: IEntry
         {
@@ -53,7 +61,7 @@ namespace Linq2Ldap.Core {
             }
 
             var ldapName = attr?.Name ?? prop.Name;
-            PropertyValueCollection val;
+            AttributeValueList val;
             if (! entryProps.ContainsKey(ldapName)) {
                 if (! attr.Optional) {
                     throw new ArgumentException(
@@ -80,7 +88,7 @@ namespace Linq2Ldap.Core {
 
         protected void ValidateTypeConvertAndSet<T>(
             T model,
-            PropertyValueCollection ldapFieldData,
+            AttributeValueList ldapFieldData,
             PropertyInfo prop,
             string ldapName
         )

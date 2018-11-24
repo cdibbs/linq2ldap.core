@@ -17,13 +17,13 @@ namespace Linq2Ldap.Core.IntegrationTest
         [Fact]
         public void Create_CanConvertCustomFieldTypes()
         {
-            var props = new Dictionary<string, PropertyValueCollection>()
+            var props = new Dictionary<string, AttributeValueList>()
             {
-                { "mail", new PropertyValueCollection("something@example.com") },
-                { "alt-mails", new PropertyValueCollection("one@two.com", "three@four.com") },
-                { "number", new PropertyValueCollection(123) }
+                { "mail", new AttributeValueList("something@example.com") },
+                { "alt-mails", new AttributeValueList("one@two.com", "three@four.com") },
+                { "number", new AttributeValueList(123) }
             };
-            var properties = new DirectoryEntryPropertyCollection(props);
+            var properties = new EntryAttributeDictionary(props);
             var result = ModelCreator.Create<MyModel>(properties, "bogus path");
 
             Assert.Equal(props["mail"][0] as string, result.Mail);

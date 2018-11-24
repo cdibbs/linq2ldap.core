@@ -6,15 +6,19 @@ using Linq2Ldap.Core.Proxies;
 
 namespace Linq2Ldap.Core.Models
 {
+    /// <summary>
+    /// An interface for providing your own DirectoryEntry concrete implementations. Classes
+    /// implementing this can be used with LdapFilterParser and LdapFilterCompiler.
+    /// </summary>
     public interface IEntry
     {
         string DistinguishedName { get; set; }
 
-        DirectoryEntryPropertyCollection Attributes { get; set; }
+        EntryAttributeDictionary Attributes { get; set; }
 
         bool Has(string attrName);
 
-        PropertyValueCollection this[string key] { get; }
+        AttributeValueList this[string key] { get; }
         //ICollection Keys { get; }
         //ICollection Values { get; }
     }

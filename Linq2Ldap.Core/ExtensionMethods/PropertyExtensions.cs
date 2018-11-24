@@ -81,7 +81,7 @@ namespace Linq2Ldap.Core.ExtensionMethods {
         /// <param name="source">The multi-valued source.</param>
         /// <param name="pattern">The LDAP filter pattern (ex: some*thing).</param>
         /// <returns>True, if it matches.</returns>
-        public static bool Matches(this PropertyValueCollection source, string pattern)
+        public static bool Matches(this AttributeValueList source, string pattern)
         {
             if (source == null) {
                 return false;
@@ -161,7 +161,7 @@ namespace Linq2Ldap.Core.ExtensionMethods {
         /// <param name="source">The multi-valued source to match against.</param>
         /// <param name="pattern">The pattern to match (ex: some*thing).</param>
         /// <returns>True, if it matches.</returns>
-        public static bool Approx(this PropertyValueCollection source, string pattern)
+        public static bool Approx(this AttributeValueList source, string pattern)
         {
             if (source == null) {
                 return false;
@@ -174,6 +174,14 @@ namespace Linq2Ldap.Core.ExtensionMethods {
             return source.Any(e => Approx(e.ToString(), pattern));
         }
 
+        /// <summary>
+        /// Checks whether the pattern approximately matches (~=) the source.
+        /// Warning: locally, this does a lower-invariant .Match(). This may not line
+        /// up with LDAP implementations. Take local, unit test results with a grain of salt.
+        /// </summary>
+        /// <param name="source">The source to match against.</param>
+        /// <param name="pattern">The pattern to match (ex: some*thing).</param>
+        /// <returns>True, if it matches.</returns>
         public static bool Approx<T, TConv>(this BaseLdapType<T, TConv> source, string pattern)
             where T: IComparable
             where TConv: class, IConverter<T>

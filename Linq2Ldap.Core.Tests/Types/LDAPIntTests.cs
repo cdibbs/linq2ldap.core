@@ -9,7 +9,7 @@ namespace Linq2Ldap.Core.Tests.Types {
         [Fact]
         public void ImplicitToInt() {
             int i = 314;
-            var t = new LdapInt(new PropertyValueCollection(new List<object>{ i }));
+            var t = new LdapInt(new AttributeValueList(new List<object>{ i }));
             int result = t;
             Assert.Equal(i, result);
         }

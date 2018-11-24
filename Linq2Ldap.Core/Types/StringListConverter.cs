@@ -6,7 +6,7 @@ using Linq2Ldap.Core.Proxies;
 namespace Linq2Ldap.Core.Types {
     public class StringListConverter : IConverter<List<string>>
     {
-        public List<string> Convert(PropertyValueCollection values)
+        public List<string> Convert(AttributeValueList values)
         {
             return values == null
                 ? null

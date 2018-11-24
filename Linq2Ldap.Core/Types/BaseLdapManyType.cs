@@ -5,12 +5,19 @@ using Linq2Ldap.Core.Proxies;
 
 namespace Linq2Ldap.Core.Types
 {
+    /// <summary>
+    /// Facilitates treatment of attribute value lists as though they were single-valued,
+    /// for the purpose of Expressions. Example: (emails=one-of-them*). Here, the emails
+    /// attribute would be a list of emails.
+    /// </summary>
+    /// <typeparam name="T">The underlying attribute type, e.g, string.</typeparam>
+    /// <typeparam name="TConv">A converter that can create a List of T from an AttributeValueList.</typeparam>
     public abstract class BaseLdapManyType<T, TConv>: List<T>, ILdapComparable<T>
         where T: IComparable
         where TConv: class, IConverter<List<T>>
     {
-        protected PropertyValueCollection Raw { get; set; }
-        public BaseLdapManyType(PropertyValueCollection raw, TConv conv)
+        protected AttributeValueList Raw { get; set; }
+        public BaseLdapManyType(AttributeValueList raw, TConv conv)
             : base(conv.Convert(raw))
         {
             this.Raw = raw;               

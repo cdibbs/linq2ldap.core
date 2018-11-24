@@ -25,19 +25,19 @@ namespace Linq2Ldap.Core.Tests.PublicAPI
         {
             var filter = "(mail=something)";
             var expr = Parser.Parse<CustomEntry>(filter);
-            var dictOne = new Dictionary<string, PropertyValueCollection>()
+            var dictOne = new Dictionary<string, AttributeValueList>()
             {
-                { "mail", new PropertyValueCollection("something") }
+                { "mail", new AttributeValueList("something") }
             };
-            var dictTwo = new Dictionary<string, PropertyValueCollection>()
+            var dictTwo = new Dictionary<string, AttributeValueList>()
             {
-                { "mail", new PropertyValueCollection("something else") }
+                { "mail", new AttributeValueList("something else") }
             };
 
             // No Exceptions thrown during execution implies it correctly used the custom entry type.
-            var result = expr.Compile()(new CustomEntry() { Attributes = new DirectoryEntryPropertyCollection(dictOne) });
+            var result = expr.Compile()(new CustomEntry() { Attributes = new EntryAttributeDictionary(dictOne) });
             Assert.True(result);
-            result = expr.Compile()(new CustomEntry() { Attributes = new DirectoryEntryPropertyCollection(dictTwo) });
+            result = expr.Compile()(new CustomEntry() { Attributes = new EntryAttributeDictionary(dictTwo) });
             Assert.False(result);
         }
 
@@ -53,9 +53,9 @@ namespace Linq2Ldap.Core.Tests.PublicAPI
 
     public class CustomEntry : IEntry
     {
-        public PropertyValueCollection this[string key] => Attributes[key];
+        public AttributeValueList this[string key] => Attributes[key];
         public string DistinguishedName { get; set; }
-        public DirectoryEntryPropertyCollection Attributes { get; set; }
+        public EntryAttributeDictionary Attributes { get; set; }
         public bool Has(string attrName) => Attributes.ContainsKey(attrName);
     }
 }

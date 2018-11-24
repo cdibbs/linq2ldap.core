@@ -7,13 +7,16 @@ using Linq2Ldap.Core.Types;
 
 namespace Linq2Ldap.Core.Proxies
 {
-    public class PropertyValueCollection
+    /// <summary>
+    /// A list of values associated with a particular attribute on a directory entry.
+    /// </summary>
+    public class AttributeValueList
         : List<object>, IEquatable<string>, ILdapComparable<string>
     {
-        public PropertyValueCollection(): base() {}
-        public PropertyValueCollection(params object[] objects) : base(objects) { }
-        public PropertyValueCollection(params string[] objects) : base(objects) { }
-        public PropertyValueCollection(IEnumerable proxyValues): base(proxyValues.Cast<object>())
+        public AttributeValueList(): base() {}
+        public AttributeValueList(params object[] objects) : base(objects) { }
+        public AttributeValueList(params string[] objects) : base(objects) { }
+        public AttributeValueList(IEnumerable proxyValues): base(proxyValues.Cast<object>())
         {
         }
 
@@ -30,37 +33,37 @@ namespace Linq2Ldap.Core.Proxies
 
         public override int GetHashCode() => base.GetHashCode();
 
-        public static bool operator ==(PropertyValueCollection a, string b)
+        public static bool operator ==(AttributeValueList a, string b)
             => a?.Any(m => string.CompareOrdinal(m.ToString(), b) == 0)
                 ?? b == null;
 
-        public static bool operator !=(PropertyValueCollection a, string b)
+        public static bool operator !=(AttributeValueList a, string b)
             => !(a == b);
 
-        public static bool operator <(PropertyValueCollection a, string b)
+        public static bool operator <(AttributeValueList a, string b)
             => a?.Any(m => string.CompareOrdinal(m.ToString(), b) < 0)
                 ?? throw new ArgumentException("Arguments to < cannot be null.");
 
-        public static bool operator >(PropertyValueCollection a, string b)
+        public static bool operator >(AttributeValueList a, string b)
             => a?.Any(m => string.CompareOrdinal(m.ToString(), b) > 0)
                 ?? throw new ArgumentException("Arguments to > cannot be null.");
 
-        public static bool operator <=(PropertyValueCollection a, string b)
+        public static bool operator <=(AttributeValueList a, string b)
             => a?.Any(m => string.CompareOrdinal(m.ToString(), b) <= 0)
                 ?? throw new ArgumentException("Arguments to <= cannot be null.");
 
-        public static bool operator >=(PropertyValueCollection a, string b)
+        public static bool operator >=(AttributeValueList a, string b)
             => a?.Any(m => string.CompareOrdinal(m.ToString(), b) >= 0)
                 ?? throw new ArgumentException("Arguments to >= cannot be null.");
 
-        public static implicit operator PropertyValueCollection(string[] list)
-            => new PropertyValueCollection(new List<object>(list));
+        public static implicit operator AttributeValueList(string[] list)
+            => new AttributeValueList(new List<object>(list));
 
-        public static implicit operator PropertyValueCollection(ReadOnlyCollectionBase list)
-            => new PropertyValueCollection(list);
+        public static implicit operator AttributeValueList(ReadOnlyCollectionBase list)
+            => new AttributeValueList(list);
 
-        public static implicit operator PropertyValueCollection(CollectionBase list)
-            => new PropertyValueCollection(list);
+        public static implicit operator AttributeValueList(CollectionBase list)
+            => new AttributeValueList(list);
 
         public bool StartsWith(string frag) => this.Any(s => s.ToString().StartsWith(frag));
         public bool EndsWith(string frag) => this.Any(s => s.ToString().EndsWith(frag));

@@ -11,7 +11,7 @@
     <RepositoryUrl>https://github.com/cdibbs/linq2ldap</RepositoryUrl>
     <PackageLicenseUrl>https://github.com/cdibbs/linq2ldap/blob/master/LICENSE</PackageLicenseUrl>
     <Authors>Chris Dibbern</Authors>
-    <PackageReleaseNotes>Initial release version. Basic compiling and parsing of RFC 1960 and related models.</PackageReleaseNotes>
+    <PackageReleaseNotes>Adding XML Doc. Minor name changes around proxy models.</PackageReleaseNotes>
     <LangVersion>7.1</LangVersion>
   </PropertyGroup>
 

@@ -6,11 +6,11 @@ namespace Linq2Ldap.Core.Types
 {
     public class LdapString: BaseLdapType<string, StringConverter>
     {
-        public LdapString(PropertyValueCollection raw): base(raw, new StringConverter())
+        public LdapString(AttributeValueList raw): base(raw, new StringConverter())
         {
         }
 
-        public LdapString(PropertyValueCollection raw, StringConverter conv): base(raw, conv)
+        public LdapString(AttributeValueList raw, StringConverter conv): base(raw, conv)
         {
         }
 
@@ -18,7 +18,7 @@ namespace Linq2Ldap.Core.Types
             => i.Converted;
 
         public static implicit operator LdapString(string i)
-            => new LdapString(new PropertyValueCollection(i));
+            => new LdapString(new AttributeValueList(i));
 
         // We'll choose not to make a public version of this for ints, because what would that mean for empty bags?
         protected override int _CompareTo(object b) => Converted.CompareTo(b);

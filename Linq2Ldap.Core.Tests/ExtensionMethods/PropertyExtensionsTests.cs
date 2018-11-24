@@ -58,7 +58,7 @@ namespace Linq2Ldap.Core.Tests.ExtensionMethods {
         public void Matches_LdapInt_MatchesInvariant(object[] input, string pattern, bool expectedResult) {
             LdapInt i = input == null
                 ? null
-                : new LdapInt(new PropertyValueCollection(
+                : new LdapInt(new AttributeValueList(
                     new List<object>(input)));
             var actual = i.Matches(pattern);
             Assert.Equal(expectedResult, actual);
@@ -73,7 +73,7 @@ namespace Linq2Ldap.Core.Tests.ExtensionMethods {
         public void Approx_LdapInt_MatchesInvariant(object[] input, string pattern, bool expectedResult) {
             LdapInt i = null;
             if (input != null)
-                i = new LdapInt(new PropertyValueCollection(new List<object>(input)));
+                i = new LdapInt(new AttributeValueList(new List<object>(input)));
 
             var actual = i.Approx(pattern);
             Assert.Equal(expectedResult, actual);
@@ -82,7 +82,7 @@ namespace Linq2Ldap.Core.Tests.ExtensionMethods {
         [InlineData(new object[] { "abc", "123", "456" }, "ab*", true)]
         [Theory]
         public void Matches_ProxyValues(object[] input, string pattern, bool expected) {
-            var p = new PropertyValueCollection(new List<object>(input));
+            var p = new AttributeValueList(new List<object>(input));
             var actual = p.Matches(pattern);
             Assert.Equal(expected, actual);
         }
@@ -90,7 +90,7 @@ namespace Linq2Ldap.Core.Tests.ExtensionMethods {
         [InlineData(new object[] { "abc", "123", "456" }, "ab*", true)]
         [Theory]
         public void Approx_ProxyValues(object[] input, string pattern, bool expected) {
-            var p = new PropertyValueCollection(new List<object>(input));
+            var p = new AttributeValueList(new List<object>(input));
             var actual = p.Approx(pattern);
             Assert.Equal(expected, actual);
         }
