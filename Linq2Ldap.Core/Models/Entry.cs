@@ -17,9 +17,6 @@ namespace Linq2Ldap.Core.Models
 
         public virtual bool Has(string attrName) => this.Attributes.ContainsKey(attrName);
 
-        public ICollection Keys => this.Attributes.Keys;
-        public ICollection Values => this.Attributes.Values;
-
         public AttributeValueList this[string key] {
             get => this.Attributes.ContainsKey(key) ? this.Attributes[key] : null;
         }
