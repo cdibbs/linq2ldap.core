@@ -11,7 +11,13 @@ namespace Linq2Ldap.Core.Types
         {
             if (values.Count > 0)
             {
-                return values[0] as string ?? values[0].ToString();
+                if (values[0] is string s)
+                    return s;
+                if (values[0] is Byte[] b)
+                    return Encoding.UTF8.GetString(b);
+
+                throw new FormatException(
+                    $"Expected string or Byte[] but got type {values[0].GetType().Name}. Please create custom converter.");
             }
 
             return null;

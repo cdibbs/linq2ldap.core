@@ -1,0 +1,256 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Linq2Ldap.Core</name>
+    </assembly>
+    <members>
+        <member name="T:Linq2Ldap.Core.Attributes.LdapFieldAttribute">
+            <summary>
+            Denotes a property on an IEntry implementation to include when loading
+            LDAP data.
+            </summary>
+        </member>
+        <member name="M:Linq2Ldap.Core.Attributes.LdapFieldAttribute.#ctor(System.String,System.Boolean)">
+            <summary>
+            Marks a property on an IEntry to include when loading LDAP data.
+            </summary>
+            <param name="name">The name within the LDAP attributes dictionary.</param>
+            <param name="optional">Whether this attribute is optional (default: false, throws when missing).</param>
+        </member>
+        <member name="T:Linq2Ldap.Core.ExtensionMethods.PropertyExtensions">
+             <summary>
+             These methods could not have been implemented as instance methods, since
+             they need to be able to deal with the case when an instance is null
+             (in LDAP terms, this is called an existence check, e.g., attr=*).
+            
+             To put it another way, null.Matches() is a no-go in an Expression. :-)
+             </summary>
+        </member>
+        <member name="M:Linq2Ldap.Core.ExtensionMethods.PropertyExtensions.Matches(System.String,System.String)">
+            <summary>
+            Checks whether an LDAP filter pattern matches the source string.
+            </summary>
+            <param name="source">The string to match against.</param>
+            <param name="pattern">The pattern to match (ex: some*thing).</param>
+            <returns>True, if it matches.</returns>
+        </member>
+        <member name="M:Linq2Ldap.Core.ExtensionMethods.PropertyExtensions.Matches``2(Linq2Ldap.Core.Types.BaseLdapManyType{``0,``1},System.String)">
+            <summary>
+            Checks whether an LDAP filter pattern matches any member of the multi-valued source.
+            </summary>
+            <param name="source">The multi-valued source.</param>
+            <param name="pattern">The LDAP filter pattern (ex: some*thing).</param>
+            <returns>True, if it matches.</returns>
+        </member>
+        <member name="M:Linq2Ldap.Core.ExtensionMethods.PropertyExtensions.Matches(Linq2Ldap.Core.Proxies.AttributeValueList,System.String)">
+            <summary>
+            Checks whether an LDAP filter pattern matches any member of the multi-valued source.
+            </summary>
+            <param name="source">The multi-valued source.</param>
+            <param name="pattern">The LDAP filter pattern (ex: some*thing).</param>
+            <returns>True, if it matches.</returns>
+        </member>
+        <member name="M:Linq2Ldap.Core.ExtensionMethods.PropertyExtensions.Matches``2(Linq2Ldap.Core.Types.BaseLdapType{``0,``1},System.String)">
+            <summary>
+            Checks whether an LDAP filter pattern matches any member of the multi-valued source.
+            </summary>
+            <param name="source">The multi-valued source.</param>
+            <param name="pattern">The LDAP filter pattern (ex: some*thing).</param>
+            <returns>True, if it matches.</returns>
+        </member>
+        <member name="M:Linq2Ldap.Core.ExtensionMethods.PropertyExtensions.Approx(System.String,System.String)">
+            <summary>
+            Checks whether the pattern approximately matches (~=) the source string.
+            Warning: locally, this does a lower-invariant .Match(). This may not line
+            up with LDAP implementations. Take local, unit test results with a grain of salt.
+            </summary>
+            <param name="source">The string to match against.</param>
+            <param name="pattern">The pattern to match (ex: some*thing).</param>
+            <returns>True, if it matches.</returns>
+        </member>
+        <member name="M:Linq2Ldap.Core.ExtensionMethods.PropertyExtensions.Approx``2(Linq2Ldap.Core.Types.BaseLdapManyType{``0,``1},System.String)">
+            <summary>
+            Checks whether the pattern approximately matches (~=) any member of the
+            multi-valued source.
+            Warning: locally, this does a lower-invariant .Match(). This may not line
+            up with LDAP implementations. Take local, unit test results with a grain of salt.
+            </summary>
+            <param name="source">The multi-valued source to match against.</param>
+            <param name="pattern">The pattern to match (ex: some*thing).</param>
+            <returns>True, if it matches.</returns>
+        </member>
+        <member name="M:Linq2Ldap.Core.ExtensionMethods.PropertyExtensions.Approx(Linq2Ldap.Core.Proxies.AttributeValueList,System.String)">
+            <summary>
+            Checks whether the pattern approximately matches (~=) any member of the
+            multi-valued source.
+            Warning: locally, this does a lower-invariant .Match(). This may not line
+            up with LDAP implementations. Take local, unit test results with a grain of salt.
+            </summary>
+            <param name="source">The multi-valued source to match against.</param>
+            <param name="pattern">The pattern to match (ex: some*thing).</param>
+            <returns>True, if it matches.</returns>
+        </member>
+        <member name="M:Linq2Ldap.Core.ExtensionMethods.PropertyExtensions.Approx``2(Linq2Ldap.Core.Types.BaseLdapType{``0,``1},System.String)">
+            <summary>
+            Checks whether the pattern approximately matches (~=) the source.
+            Warning: locally, this does a lower-invariant .Match(). This may not line
+            up with LDAP implementations. Take local, unit test results with a grain of salt.
+            </summary>
+            <param name="source">The source to match against.</param>
+            <param name="pattern">The pattern to match (ex: some*thing).</param>
+            <returns>True, if it matches.</returns>
+        </member>
+        <member name="M:Linq2Ldap.Core.FilterCompiler.CompilerCore.ExpressionToString(System.Linq.Expressions.Expression,System.Collections.Generic.IReadOnlyCollection{System.Linq.Expressions.ParameterExpression})">
+            <summary>
+            Recursively translates an Expression to an LDAP filter (RFC 1960).
+            See formal definition of RFC 1960 at the bottom of this Microsoft doc page.
+            https://docs.microsoft.com/en-us/windows/desktop/adsi/search-filter-syntax
+            </summary>
+            <param name="expr">The Expression body to convert.</param>
+            <param name="p">The ParameterExpression associated with the body.</param>
+            <returns>A string containing an equivalent LDAP filter.</returns>
+        </member>
+        <member name="M:Linq2Ldap.Core.FilterCompiler.ILdapFilterCompiler.Compile``1(System.Linq.Expressions.Expression{System.Func{``0,System.Boolean}})">
+            <summary>
+            Compiles an LDAP Filter string from a LINQ Expression. Implements
+            a subset of Expressions that includes boolean algebraic operators (||, &amp;&amp;, !),
+            comparison operators (==, &lt;=, &gt;=, !=), as well as substring filters
+            like .Contains(), .StartsWith(), and .EndsWith().
+            For other methods and expressions, assign their results to a variable before
+            using the variable inside a Linq-to-LDAP expression.
+            </summary>
+            <typeparam name="T">The LDAP model.</typeparam>
+            <param name="expr">A Linq Expression over the LDAP model.</param>
+            <returns>An LDAP filter string.</returns>
+        </member>
+        <member name="T:Linq2Ldap.Core.FilterCompiler.LdapFilterCompiler">
+            <inheritdoc />
+        </member>
+        <member name="M:Linq2Ldap.Core.FilterCompiler.LdapFilterCompiler.Compile``1(System.Linq.Expressions.Expression{System.Func{``0,System.Boolean}})">
+            <inheritdoc />
+        </member>
+        <member name="M:Linq2Ldap.Core.FilterCompiler.Strings._AdjustCompares(System.String,System.String,System.Int32,System.Boolean)">
+            <summary>Use val and positional data to put member access always on left side.</summary>
+        </member>
+        <member name="M:Linq2Ldap.Core.FilterParser.ILdapFilterParser.Parse``1(System.String,System.String)">
+            <summary>
+            Parses an LDAP filter from the given string into an Expression&lt;Func&lt;T,bool&gt;&gt;.
+            </summary>
+            <typeparam name="T">A type implementing IEntry whose indexer to use for attribute references. E.g., m["email"].</typeparam>
+            <param name="filter">An LDAP filter string (RFC 1960).</param>
+            <param name="modelName">An optional model variable name to use in the resulting Expression. Defaults to "m".</param>
+            <returns>A predicate Expression representing the input filter and accepting one parameter of type T.</returns>
+        </member>
+        <member name="P:Linq2Ldap.Core.FilterParser.Token.IsDefinedSymbol">
+            <summary>
+            Indicates whether this is one of the defined symbols.
+            </summary>
+            <value>True, if in the set of defined symbols. False if user text.</value>
+        </member>
+        <member name="M:Linq2Ldap.Core.IModelCreator.Create``1(Linq2Ldap.Core.Proxies.EntryAttributeDictionary,System.String)">
+            <summary>
+            Creates a new instance of an LDAP Entry model and populates its fields.
+            </summary>
+            <param name="entryProps">A proxy dictionary of the LDAP entry's fields.</param>
+            <param name="dn">DistinguishedName field of this entry.</param>
+            <typeparam name="T">The destination IEntry model type.</typeparam>
+            <returns>A populated instance of T.</returns>
+        </member>
+        <member name="M:Linq2Ldap.Core.ModelCreator.Create``1(Linq2Ldap.Core.Proxies.EntryAttributeDictionary,System.String)">
+            <summary>
+            Creates a new instance of an LDAP Entry model and populates its fields.
+            </summary>
+            <param name="entryProps">A proxy dictionary of the LDAP entry's fields.</param>
+            <param name="dn">DistinguishedName field of this entry.</param>
+            <typeparam name="T">The destination IEntry model type.</typeparam>
+            <returns>A populated instance of T.</returns>
+        </member>
+        <member name="M:Linq2Ldap.Core.ModelCreator.Create``1(``0,Linq2Ldap.Core.Proxies.EntryAttributeDictionary)">
+            <summary>
+            Given an IEntry class, T, populate its LdapField properties from the given
+            collection of directory entry attributes.
+            </summary>
+            <typeparam name="T">A type implementing IEntry.</typeparam>
+            <param name="model">An object whose type implements IEntry.</param>
+            <param name="entryProps">A collection of directory entry properties and values.</param>
+            <returns></returns>
+        </member>
+        <member name="T:Linq2Ldap.Core.Models.Entry">
+            <summary>
+            Represents a DirectoryEntry in a platform-agnostic way.
+            </summary>
+        </member>
+        <member name="T:Linq2Ldap.Core.Models.IEntry">
+            <summary>
+            An interface for providing your own DirectoryEntry concrete implementations. Classes
+            implementing this can be used with LdapFilterParser and LdapFilterCompiler.
+            </summary>
+        </member>
+        <member name="T:Linq2Ldap.Core.Proxies.AttributeValueList">
+            <summary>
+            A list of values associated with a particular attribute on a directory entry.
+            </summary>
+        </member>
+        <member name="T:Linq2Ldap.Core.Proxies.EntryAttributeDictionary">
+            <summary>
+            A dictionary of attributes on a directory entry. Each key is the attribute name.
+            For example, objectClass, cn, or email.
+            </summary>
+        </member>
+        <member name="T:Linq2Ldap.Core.Specifications.Specification`1">
+            <summary>
+            A specification is an expression that given an object of type T, produces
+            true if the object satisifies the expression and false otherwise.
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="P:Linq2Ldap.Core.Specifications.Specification`1.Metadata">
+            <summary>
+            Used to record debugging information about the spec.
+            </summary>
+        </member>
+        <member name="T:Linq2Ldap.Core.Types.BaseLdapManyType`2">
+            <summary>
+            Facilitates treatment of attribute value lists as though they were single-valued,
+            for the purpose of Expressions. Example: (emails=one-of-them*). Here, the emails
+            attribute would be a list of emails.
+            </summary>
+            <typeparam name="T">The underlying attribute type, e.g, string.</typeparam>
+            <typeparam name="TConv">A converter that can create a List of T from an AttributeValueList.</typeparam>
+        </member>
+        <member name="M:Linq2Ldap.Core.Types.BaseLdapManyType`2.CompareTo(`0)">
+            <summary>
+            Compares a multi-valued LDAP list with the given string.
+            Warning: by necessity, this is a little quirky (look at return value)
+            due to the use of implicit operators. Serialization should still work
+            fine, though.
+            </summary>
+            <param name="b">The string to compare with.</param>
+            <returns>An IntList of individual CompareTo results.</returns>
+        </member>
+        <member name="T:Linq2Ldap.Core.Types.BaseLdapType`2">
+            <summary>
+            Facilitates conversion from an AttributeValueList to a type T so that classes
+            deriving from this type can be used in Expressions over IEntry implementations.
+            </summary>
+            <typeparam name="T">An IComparable type converted from an AttributeValueList.</typeparam>
+            <typeparam name="TConv">A converter that takes an AttributeValueList and makes a T.</typeparam>
+        </member>
+        <member name="M:Linq2Ldap.Core.Types.ILdapComparable`1.CompareTo(`0)">
+            <summary>
+            Facilitates comparison overloads with many-valued types. See the IntList
+            implementation for what to return.
+            </summary>
+            <param name="b">The IComparable to compare with the many-valued type.</param>
+            <returns>An IntList containing comparison results.</returns>
+        </member>
+        <member name="T:Linq2Ldap.Core.Types.IntList">
+            <summary>
+            Facilitates CompareTo on BaseLdapManyType, BaseLdapType,
+            and subclasses by providing comparison operator overloads on lists of
+            integer CompareTo results. This accommodates LDAPs
+            multi-valued fields. Ex: (mails=something*)
+            </summary>
+        </member>
+    </members>
+</doc>

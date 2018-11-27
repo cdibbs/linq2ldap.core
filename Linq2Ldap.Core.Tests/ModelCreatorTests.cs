@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using Linq2Ldap.Core.Attributes;
 using Linq2Ldap.Core.Models;
 using Linq2Ldap.Core.Proxies;
@@ -38,7 +40,7 @@ namespace Linq2Ldap.Core.Tests
         }
 
         [Fact]
-        public void NullProp_YieldsNullField() {
+        public void Create_NullProp_YieldsNullField() {
             var path = "test path";
             var properties = new EntryAttributeDictionary(
                 new Dictionary<string, Core.Proxies.AttributeValueList>()
@@ -52,7 +54,7 @@ namespace Linq2Ldap.Core.Tests
         }
 
         [Fact]
-        public void NullManyProp_Optional_YieldsNullField() {
+        public void Create_NullManyProp_Optional_YieldsNullField() {
             var path = "test path";
             var properties = new EntryAttributeDictionary(
                 new Dictionary<string, Core.Proxies.AttributeValueList>()
@@ -66,7 +68,7 @@ namespace Linq2Ldap.Core.Tests
         }
 
         [Fact]
-        public void EmptyProp_Optional_YieldsNullField() {
+        public void Create_EmptyProp_Optional_YieldsNullField() {
             var path = "test path";
             var properties = new EntryAttributeDictionary(
                 new Dictionary<string, Core.Proxies.AttributeValueList>()
@@ -79,7 +81,7 @@ namespace Linq2Ldap.Core.Tests
         }
 
         [Fact]
-        public void EmptyManyProp_Optional_YieldsEmptyField() {
+        public void Create_EmptyManyProp_Optional_YieldsEmptyField() {
             var path = "test path";
             var properties = new EntryAttributeDictionary(
                 new Dictionary<string, Core.Proxies.AttributeValueList>()
@@ -89,6 +91,21 @@ namespace Linq2Ldap.Core.Tests
             );
             var b = Creator.Create<MyTestModel>(properties, path);
             Assert.Empty(b.AltMails);
+        }
+
+        [Fact]
+        public void Create_CanConvertToSimpleStringFromBytes()
+        {
+            var path = "test path";
+            var teststr = "anemail@example.com";
+            var properties = new EntryAttributeDictionary(
+                new Dictionary<string, AttributeValueList>()
+                {
+                    { "mail", new AttributeValueList(new object[] { Encoding.UTF8.GetBytes(teststr) }) }
+                }
+            );
+            var b = Creator.Create<MyTestModel>(properties, path);
+            Assert.Equal(teststr, b.Mail);
         }
     }
 

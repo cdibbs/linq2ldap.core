@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using Linq2Ldap.Core.Attributes;
 using Linq2Ldap.Core.Models;
 using Linq2Ldap.Core.Proxies;
@@ -86,7 +87,7 @@ namespace Linq2Ldap.Core {
             }
         }
 
-        protected void ValidateTypeConvertAndSet<T>(
+        protected internal void ValidateTypeConvertAndSet<T>(
             T model,
             AttributeValueList ldapFieldData,
             PropertyInfo prop,
@@ -124,12 +125,30 @@ namespace Linq2Ldap.Core {
             }
             else if (ldapFieldData.Count == 1)
             {
-                prop.SetValue(model, ldapFieldData[0]);
+                prop.SetValue(model, Coerce(prop.PropertyType, ldapFieldData[0]));
                 return;
             }
 
             throw new FormatException(
                 $"Mapping to non-array type, but LDAP data is array: {ldapName} -> {prop.Name}.");
+        }
+
+        protected internal object Coerce(Type destType, object o)
+        {
+            // Try our best.
+            if (destType == typeof(string))
+            {
+                if (o is Byte[] b)
+                {
+                    return Encoding.UTF8.GetString(b);
+                }
+                else if (o is string s)
+                {
+                    return s;
+                }
+            }
+
+            return o;
         }
     }
 }
