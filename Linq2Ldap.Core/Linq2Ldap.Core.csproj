@@ -11,7 +11,7 @@
     <RepositoryUrl>https://github.com/cdibbs/linq2ldap</RepositoryUrl>
     <PackageLicenseUrl>https://github.com/cdibbs/linq2ldap/blob/master/LICENSE</PackageLicenseUrl>
     <Authors>Chris Dibbern</Authors>
-    <PackageReleaseNotes>Adding XML Doc. Minor name changes around proxy models.</PackageReleaseNotes>
+    <PackageReleaseNotes>Fixing filter value escape bug.</PackageReleaseNotes>
     <LangVersion>7.1</LangVersion>
   </PropertyGroup>
 
