@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 namespace Linq2Ldap.Core.FilterCompiler {
     public class ValueUtil {
         public string EscapeFilterValue(string value) {
-            var replacer = new Regex("([*\\\\#+<>;\"=])");
+            var replacer = new Regex(@"([*\)\(\\])");
             var result = replacer.Replace(value, @"\$1");
             var left = result.TrimStart(' ');
             var right = result.TrimEnd(' ');

@@ -29,14 +29,14 @@ namespace Linq2Ldap.Core.Tests.FilterCompiler
         }
 
         [Fact]
-        public void CompileFromLinq_EscapesIndexerNames() {
+        public void Compile_EscapesIndexerNames() {
             Expression<Func<TestLdapModel, bool>> expr = (TestLdapModel e) => e["one "] == "123";
             var filter = Core.ExpressionToString(expr.Body, expr.Parameters);
             Assert.Equal(@"(one\ =123)", filter);
         }
 
         [Fact]
-        public void CompileFromLinq_EscapesPropertyNames() {
+        public void Compile_EscapesPropertyNames() {
             Expression<Func<TestLdapModel, bool>> expr = (TestLdapModel e) => e.WeirdName == "123";
             var filter = Core.ExpressionToString(expr.Body, expr.Parameters);
             Assert.Equal(@"(\ we ird\ \ =123)", filter);
@@ -57,7 +57,7 @@ namespace Linq2Ldap.Core.Tests.FilterCompiler
         }
 
         [Fact]
-        public void CompileFromLinq_NonConstPDictKey_Throws() // KIS: why maintain unnec. complexity?
+        public void Compile_NonConstPDictKey_Throws() // KIS: why maintain unnec. complexity?
         {
             Func<string> testfn = () => "samaccountname"; // TestLdapModel can always invoke prior to express
             Expression<Func<TestLdapModel, bool>> expr1 = (TestLdapModel u) => u.Attributes[testfn()] == "123";
@@ -65,7 +65,7 @@ namespace Linq2Ldap.Core.Tests.FilterCompiler
         }
 
         [Fact]
-        public void CompileFromLinq_AndAlsoWithSubExpr_GeneratesValidLDAPFilterString()
+        public void Compile_AndAlsoWithSubExpr_GeneratesValidLDAPFilterString()
         {
             Expression<Func<TestLdapModel, bool>> e
                 = (TestLdapModel u) => u.SamAccountName.Contains("test") && u.CommonName == "123";
@@ -74,7 +74,7 @@ namespace Linq2Ldap.Core.Tests.FilterCompiler
         }
 
         [Fact]
-        public void CompileFromLinq_StringCompare_NonConstParam()
+        public void Compile_StringCompare_NonConstParam()
         {
             Func<string> testfn = () => "samaccountname"; // TestLdapModel can always invoke prior to express
             Expression<Func<TestLdapModel, bool>> e
@@ -83,7 +83,7 @@ namespace Linq2Ldap.Core.Tests.FilterCompiler
         }
 
         [Fact]
-        public void CompileFromLinq_UnsupportedExpressionType_Throws()
+        public void Compile_UnsupportedExpressionType_Throws()
         {
             int a = 3, b = 4;
             Expression<Func<TestLdapModel, bool>> e
@@ -99,10 +99,10 @@ namespace Linq2Ldap.Core.Tests.FilterCompiler
         }
 
         [Fact]
-        public void _EvalExpr_EscapesValues() {
-            Expression<Func<TestLdapModel, string>> e = (TestLdapModel u) => @"must*escape\this";
-            var result = Core.EvalExpr(e.Body, e.Parameters);
-            Assert.Equal(@"must\*escape\\this", result);
+        public void Compile_EscapesValues() {
+            Expression<Func<TestLdapModel, bool>> e = (TestLdapModel u) => u.CommonName == @"must*escape\this(please)";
+            var result = FilterCompiler.Compile(e);
+            Assert.Equal(@"(cn=must\*escape\\this\(please\))", result);
         }
     }
 
