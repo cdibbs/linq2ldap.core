@@ -64,7 +64,7 @@ namespace Linq2Ldap.Core.FilterParser
                 return CreatePresenceCheck<T>(op, tokens, startPos, endPos, paramExpr);
             }
 
-            if (len == 3) {
+            if (len >= 3 && OnlyNonMatchParts(tokens, startPos, endPos)) {
                 return CreateSimpleCompare<T>(tokens, startPos, endPos, paramExpr);
             }
 
@@ -73,6 +73,25 @@ namespace Linq2Ldap.Core.FilterParser
             }
 
             throw new SyntaxException($"Unrecognized expression type.", startPos, endPos);
+        }
+
+        internal bool OnlyNonMatchParts(IEnumerable<Token> tokens, int startPos, int endPos)
+        {
+            for (var i=startPos + 2; i<=endPos; i++)
+            {
+                var tok = tokens.ElementAt(i);
+                if (tok.IsDefinedSymbol && tok.Text == Tokens.Star)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        internal string StringifyTokens(IEnumerable<Token> tokens, int startPos, int endPos)
+        {
+            return string.Join("", new ArraySegment<Token>(tokens.ToArray(), startPos, endPos - startPos + 1));
         }
 
         internal Expression CreatePresenceCheck<T>(
@@ -113,8 +132,8 @@ namespace Linq2Ldap.Core.FilterParser
                         new [] { typeof(AttributeValueList), typeof(string) });
                 var start = tokens.ElementAt(startPos);
                 var matchAgg = tokens
-                    .Skip(startPos)
-                    .Take(endPos - startPos + 1)
+                    .Skip(startPos + 1)
+                    .Take(endPos - startPos)
                     .Aggregate(
                         new Token(start.Text, 0, start.IsDefinedSymbol),
                         AggregateOneToken);
@@ -125,16 +144,14 @@ namespace Linq2Ldap.Core.FilterParser
         }
 
         internal Token AggregateOneToken(Token acc, Token cur) {
-            if (cur.IsDefinedSymbol && cur.Text != Tokens.Star) {
-                throw new SyntaxException($"This symbol not allowed in match expression: {cur.Text}.", cur.StartPos, cur.EndPos);
-            }
-
-            if (cur.IsDefinedSymbol != acc.IsDefinedSymbol) {
+            if (cur.Text != Tokens.LeftParen)
+            {
                 acc.Text += cur.Text;
                 acc.IsDefinedSymbol = cur.IsDefinedSymbol;
+                return acc;
             }
 
-            return acc;
+            throw new SyntaxException($"This symbol not allowed in match expression: {cur.Text}.", cur.StartPos, cur.EndPos);
         }
 
         internal Expression CreateSimpleCompare<T>(
@@ -146,25 +163,18 @@ namespace Linq2Ldap.Core.FilterParser
             where T: IEntry
         {
             var left = tokens.ElementAt(startPos);
-            var right = tokens.ElementAt(startPos + 2);
-            if (right.IsDefinedSymbol || left.IsDefinedSymbol) {
-                // This is CreateSimpleCompare. How did we get here? These should be handled in CreateMatchCheck.
-                throw new SyntaxException(
-                    $"Binary expression arguments cannot include operators (except asterisks on the right-hand side).",
-                    right.StartPos, right.EndPos);
-            }
-
+            var right = StringifyTokens(tokens, startPos + 2, endPos);
             var memberRef = BuildPropertyExpr<T>(left, paramExpr);
             var op = tokens.ElementAt(startPos + 1);
             switch(op.Text) {
                 case Tokens.Equal:
-                    return Expression.Equal(memberRef, Expression.Constant(right.Text));
+                    return Expression.Equal(memberRef, Expression.Constant(right));
                 case Tokens.Present:
-                    return Expression.Equal(memberRef, Expression.Constant($"*{right.Text}"));
+                    return Expression.Equal(memberRef, Expression.Constant($"*{right}"));
                 case Tokens.GTE:
-                    return Expression.GreaterThanOrEqual(memberRef, Expression.Constant(right.Text));
+                    return Expression.GreaterThanOrEqual(memberRef, Expression.Constant(right));
                 case Tokens.LTE:
-                    return Expression.LessThanOrEqual(memberRef, Expression.Constant(right.Text));
+                    return Expression.LessThanOrEqual(memberRef, Expression.Constant(right));
                 case Tokens.Approx:
                     // TODO add overload for property bag extension methods? Tests
                     // TODO flesh out method types to pass...
@@ -172,7 +182,7 @@ namespace Linq2Ldap.Core.FilterParser
                         .GetMethod(
                             nameof(PropertyExtensions.Approx),
                             new [] { typeof(AttributeValueList), typeof(string) });
-                    return Expression.Call(methodInfo, memberRef, Expression.Constant(right.Text));
+                    return Expression.Call(methodInfo, memberRef, Expression.Constant(right));
                 default:
                     throw new SyntaxException($"Unrecognized operator: {op.Text}.", op.StartPos, op.EndPos);
             }

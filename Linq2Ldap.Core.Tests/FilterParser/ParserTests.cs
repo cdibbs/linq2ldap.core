@@ -36,7 +36,6 @@ namespace Linq2Ldap.Core.Tests.FilterParser {
         [InlineData("(&(a=b)(c=d))", true)]
         [InlineData("(&(a=b)(!(c=d)))", false)]
         [InlineData("(|(a=b)(!(c=d)))", true)]
-        [InlineData("(&(a=b)(!(c=d)))", false)]
         [InlineData("(&(a=b)(c=d)(e>=31)))", true)]
         [InlineData("(&(a=b)(c=d)(e>=315)))", false)]
         [Theory]
@@ -87,7 +86,6 @@ namespace Linq2Ldap.Core.Tests.FilterParser {
         [InlineData(@"(a=b)", false)]
         [InlineData(@"(a=*)", false)]
         [InlineData(@"(a\==*)", true)]
-        [InlineData(@"(a=*)", false)]
         [InlineData(@"(c\\=*)", true)]
         [InlineData(@"(c\==*)", false)]
         [Theory]
@@ -127,6 +125,35 @@ namespace Linq2Ldap.Core.Tests.FilterParser {
             var expr = Parser.Parse<Entry>(input);
             var filter = compiler.Compile(expr);
             Assert.Equal(expected, filter);
+        }
+
+        [InlineData(@"(one=two=three=four)", "two=three=four")]
+        [InlineData(@"(one=three\*four\*five)", @"three*four*five")]
+        [InlineData(@"(one=three\(four\(five)", @"three(four(five")]
+        [InlineData(@"(one=three\)four\)five)", @"three)four)five")]
+        [InlineData(@"(one=three\(four\)five)", @"three(four)five")]
+        [InlineData(@"(one=three\(\*four\)five)", @"three(*four)five")]
+        [InlineData(@"(one=three\\four\\five)", @"three\four\five")]
+        [Theory]
+        public void Parse_UnescapesLeftvalue(string testStr, string expected)
+        {
+            var expr = Parser.Parse<Entry>(testStr);
+            var bin = expr.Body as BinaryExpression;
+            var right = (bin.Right as ConstantExpression).Value;
+            Assert.Equal(expected, right);
+        }
+
+        [InlineData(@"(member:1.2.840.113556.1.4.1941:=abc)", "abc")]
+        [InlineData(@"(:dn:=abc)", "abc")]
+        [InlineData(@"(:dn:=CN=someuser,OU=Users,DC=ACompany,DC=Com)", "CN=someuser,OU=Users,DC=ACompany,DC=Com")]
+        [InlineData(@"(member:1.2.840.113556.1.4.1941:=CN=someuser,OU=Users,DC=ACompany,DC=Com)", "CN=someuser,OU=Users,DC=ACompany,DC=Com")]
+        [Theory]
+        public void Parse_CanHandleValuesWithSymbols(string testStr, string expected)
+        {
+            var expr = Parser.Parse<Entry>(testStr);
+            var bin = expr.Body as BinaryExpression;
+            var right = (bin.Right as ConstantExpression).Value;
+            Assert.Equal(expected, right);
         }
     }
 }
