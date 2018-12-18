@@ -53,7 +53,18 @@ namespace Linq2Ldap.Core.Tests.PublicAPI
 
     public class CustomEntry : IEntry
     {
-        public AttributeValueList this[string key] => Attributes[key];
+        public AttributeValueList this[string attr] => Attributes[attr];
+
+        public EqualsOnlyAttributeValueList this[Rule rule] => throw new NotImplementedException();
+
+        public EqualsOnlyAttributeValueList this[string attr, Rule rule] => throw new NotImplementedException();
+
+        public EqualsOnlyAttributeValueList this[Rule rule, bool isDnAttr] => throw new NotImplementedException();
+
+        public EqualsOnlyAttributeValueList this[string attr, bool isDnAttr] => throw new NotImplementedException();
+
+        public EqualsOnlyAttributeValueList this[string attr, Rule rule, bool isDn] => throw new NotImplementedException();
+
         public string DistinguishedName { get; set; }
         public EntryAttributeDictionary Attributes { get; set; }
         public bool Has(string attrName) => Attributes.ContainsKey(attrName);

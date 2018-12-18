@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
 using Linq2Ldap.Core.FilterCompiler;
+using Linq2Ldap.Core.FilterCompiler.Models;
 using Linq2Ldap.Core.Models;
 using Moq;
 using Xunit;
@@ -24,7 +25,7 @@ namespace Linq2Ldap.Core.Tests.FilterCompiler
         {
             var str = "stringy";
             Expression<Func<TestLdapModel, object>> expr = (TestLdapModel m) => str;
-            var cc = new CompilerCore();
+            var cc = new CompilerCore(new CompilerOptions());
             Assert.Throws<NotImplementedException>(() =>
                 cc._MemberToString(expr.Body as MemberExpression, expr.Parameters));
         }

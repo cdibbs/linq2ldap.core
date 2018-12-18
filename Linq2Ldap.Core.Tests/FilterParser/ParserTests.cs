@@ -6,6 +6,8 @@ using Linq2Ldap.Core.Proxies;
 using Linq2Ldap.Core.FilterCompiler;
 using System.Linq.Expressions;
 using System;
+using Linq2Ldap.Core.FilterCompiler.Models;
+using Linq2Ldap.Core.FilterParser.Models;
 
 namespace Linq2Ldap.Core.Tests.FilterParser {
     public class ParserTests {
@@ -89,7 +91,7 @@ namespace Linq2Ldap.Core.Tests.FilterParser {
         [InlineData(@"(c\\=*)", true)]
         [InlineData(@"(c\==*)", false)]
         [Theory]
-        public void Parse_Integration_EscapeChecks(string input, bool expected) {
+        public void Parse_Integration_1960EscapeChecks(string input, bool expected) {
             var expr = Parser.Parse<Entry>(input);
             var dict = new Dictionary<string, AttributeValueList>() {
                 { @"a=", new AttributeValueList(new List<object>() { "b" }) },
@@ -120,8 +122,8 @@ namespace Linq2Ldap.Core.Tests.FilterParser {
         [InlineData(@"(  |)", @"(|)")]
         [InlineData(@"(| (aaaa=         123  )(bcd\ = \  321 ))", @"(|(aaaa=123)(bcd\ =\ \ 321))")]
         [Theory]
-        public void Parse_CanHandleWhitespace(string input, string expected) {
-            var compiler = new LdapFilterCompiler();
+        public void Parse_1960CanHandleWhitespace(string input, string expected) {
+            var compiler = new LdapFilterCompiler(null, new CompilerOptions() { Target = RFCTarget.RFC1960 });
             var expr = Parser.Parse<Entry>(input);
             var filter = compiler.Compile(expr);
             Assert.Equal(expected, filter);
@@ -135,7 +137,7 @@ namespace Linq2Ldap.Core.Tests.FilterParser {
         [InlineData(@"(one=three\(\*four\)five)", @"three(*four)five")]
         [InlineData(@"(one=three\\four\\five)", @"three\four\five")]
         [Theory]
-        public void Parse_UnescapesLeftvalue(string testStr, string expected)
+        public void Parse_1960UnescapesLeftvalue(string testStr, string expected)
         {
             var expr = Parser.Parse<Entry>(testStr);
             var bin = expr.Body as BinaryExpression;
@@ -148,7 +150,7 @@ namespace Linq2Ldap.Core.Tests.FilterParser {
         [InlineData(@"(:dn:=CN=someuser,OU=Users,DC=ACompany,DC=Com)", "CN=someuser,OU=Users,DC=ACompany,DC=Com")]
         [InlineData(@"(member:1.2.840.113556.1.4.1941:=CN=someuser,OU=Users,DC=ACompany,DC=Com)", "CN=someuser,OU=Users,DC=ACompany,DC=Com")]
         [Theory]
-        public void Parse_CanHandleValuesWithSymbols(string testStr, string expected)
+        public void Parse_1960CanHandleValuesWithSymbols(string testStr, string expected)
         {
             var expr = Parser.Parse<Entry>(testStr);
             var bin = expr.Body as BinaryExpression;

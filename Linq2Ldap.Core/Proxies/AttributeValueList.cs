@@ -11,7 +11,7 @@ namespace Linq2Ldap.Core.Proxies
     /// A list of values associated with a particular attribute on a directory entry.
     /// </summary>
     public class AttributeValueList
-        : List<object>, IEquatable<string>, ILdapComparable<string>
+        : EqualsOnlyAttributeValueList
     {
         public AttributeValueList(): base() {}
         public AttributeValueList(params object[] objects) : base(objects) { }
@@ -28,10 +28,6 @@ namespace Linq2Ldap.Core.Proxies
             }
             return results;
         }
-
-        public bool Equals(string other) => this == other;
-
-        public override int GetHashCode() => base.GetHashCode();
 
         public static bool operator ==(AttributeValueList a, string b)
             => a?.Any(m => string.CompareOrdinal(m.ToString(), b) == 0)
@@ -68,7 +64,5 @@ namespace Linq2Ldap.Core.Proxies
         public bool StartsWith(string frag) => this.Any(s => s.ToString().StartsWith(frag));
         public bool EndsWith(string frag) => this.Any(s => s.ToString().EndsWith(frag));
         public bool Contains(string frag) => this.Any(s => s.ToString().Contains(frag));
-
-        public override bool Equals(object obj) => base.Equals(obj);
     }
 }

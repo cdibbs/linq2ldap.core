@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using Linq2Ldap.Core.ExtensionMethods;
+using Linq2Ldap.Core.FilterParser.Models;
 using Linq2Ldap.Core.Models;
 using Linq2Ldap.Core.Proxies;
 
@@ -11,11 +12,33 @@ namespace Linq2Ldap.Core.FilterParser
     public class LdapFilterParser: ILdapFilterParser
     {
         protected ILexer Lexer { get; set; }
-        public LdapFilterParser(ILexer lexer = null) {
-            Lexer = lexer ?? new Lexer();
+        protected ParserOptions Options { get; set; }
+
+        /// <summary>
+        /// Creates a new LDAP filter parser.
+        /// </summary>
+        /// <param name="lexer">The lexer to use. Default: internal implementation.</param>
+        /// <param name="options">The parsing and lexing options. Defaults include: opts.Target = RFC2254</param>
+        public LdapFilterParser(
+            ILexer lexer = null,
+            ParserOptions options = null
+        ) {
+            Options = options ?? new ParserOptions();
+            if (lexer != null)
+            {
+                lexer = Lexer;
+                return;
+            }
+
+            Lexer = Options.Target == RFCTarget.RFC2254
+                ? new Lexer2254(Options)
+                : new Lexer(Options);
         }
 
-        public Expression<Func<T, bool>> Parse<T>(string filter, string modelName = "m")
+        public Expression<Func<T, bool>> Parse<T>(
+            string filter,
+            string modelName = "m"
+        )
             where T: IEntry
         {
             var tokens = Lexer.Lex(filter);
@@ -35,7 +58,7 @@ namespace Linq2Ldap.Core.FilterParser
         {
             var start = tokens.ElementAt(startPos);
             var end = tokens.ElementAt(endPos);
-            if (start.Text != Tokens.LeftParen || end.Text != Tokens.RightParen) {
+            if (start.Text != Tokens1960.LeftParen || end.Text != Tokens1960.RightParen) {
                 throw new SyntaxException("Filters are Lisp-like and must begin and end with parentheses.", startPos, endPos);
             }
 
@@ -51,16 +74,16 @@ namespace Linq2Ldap.Core.FilterParser
             where T: IEntry
         {
             var op = tokens.ElementAt(startPos);
-            if (new [] { Tokens.And, Tokens.Or }.Contains(op.Text)) {
+            if (new [] { Tokens1960.And, Tokens1960.Or }.Contains(op.Text)) {
                 return CreateListOp<T>(op, tokens, startPos + 1, endPos, paramExpr);
             }
 
-            if (Tokens.Not == op.Text) {
+            if (Tokens1960.Not == op.Text) {
                 return CreateNegation<T>(tokens, startPos + 1, endPos, paramExpr);
             }
 
             int len = endPos - startPos + 1;
-            if (len == 2 && tokens.ElementAt(endPos).Text == Tokens.Present) {
+            if (len == 2 && tokens.ElementAt(endPos).Text == Tokens1960.Present) {
                 return CreatePresenceCheck<T>(op, tokens, startPos, endPos, paramExpr);
             }
 
@@ -68,7 +91,7 @@ namespace Linq2Ldap.Core.FilterParser
                 return CreateSimpleCompare<T>(tokens, startPos, endPos, paramExpr);
             }
 
-            if (len > 3 && tokens.ElementAt(startPos + 1).Text == Tokens.Equal) {
+            if (len > 3 && tokens.ElementAt(startPos + 1).Text == Tokens1960.Equal) {
                 return CreateMatchCheck<T>(op, tokens, startPos + 2, endPos, paramExpr);
             }
 
@@ -80,7 +103,7 @@ namespace Linq2Ldap.Core.FilterParser
             for (var i=startPos + 2; i<=endPos; i++)
             {
                 var tok = tokens.ElementAt(i);
-                if (tok.IsDefinedSymbol && tok.Text == Tokens.Star)
+                if (tok.IsDefinedSymbol && tok.Text == Tokens1960.Star)
                 {
                     return false;
                 }
@@ -144,7 +167,7 @@ namespace Linq2Ldap.Core.FilterParser
         }
 
         internal Token AggregateOneToken(Token acc, Token cur) {
-            if (cur.Text != Tokens.LeftParen)
+            if (cur.Text != Tokens1960.LeftParen)
             {
                 acc.Text += cur.Text;
                 acc.IsDefinedSymbol = cur.IsDefinedSymbol;
@@ -167,15 +190,15 @@ namespace Linq2Ldap.Core.FilterParser
             var memberRef = BuildPropertyExpr<T>(left, paramExpr);
             var op = tokens.ElementAt(startPos + 1);
             switch(op.Text) {
-                case Tokens.Equal:
+                case Tokens1960.Equal:
                     return Expression.Equal(memberRef, Expression.Constant(right));
-                case Tokens.Present:
+                case Tokens1960.Present:
                     return Expression.Equal(memberRef, Expression.Constant($"*{right}"));
-                case Tokens.GTE:
+                case Tokens1960.GTE:
                     return Expression.GreaterThanOrEqual(memberRef, Expression.Constant(right));
-                case Tokens.LTE:
+                case Tokens1960.LTE:
                     return Expression.LessThanOrEqual(memberRef, Expression.Constant(right));
-                case Tokens.Approx:
+                case Tokens1960.Approx:
                     // TODO add overload for property bag extension methods? Tests
                     // TODO flesh out method types to pass...
                     var methodInfo = typeof(PropertyExtensions)
@@ -215,10 +238,10 @@ namespace Linq2Ldap.Core.FilterParser
             }
 
             var paren = tokens.ElementAt(startPos);
-            if (paren.Text == Tokens.RightParen) {
+            if (paren.Text == Tokens1960.RightParen) {
                 // Then it was the canonical true/false that's available in some LDAP implementations
                 return CanonicalBool(op);
-            } else if (paren.Text != Tokens.LeftParen) {
+            } else if (paren.Text != Tokens1960.LeftParen) {
                 throw new SyntaxException($"Sub-filter must begin with left paren. Was: {paren.Text}.", startPos, endPos);
             }
 
@@ -230,8 +253,8 @@ namespace Linq2Ldap.Core.FilterParser
                     return subExpr;
                 }
                 switch(op.MatchedToken) {
-                    case Tokens.And: return Expression.AndAlso(subExpr, subExpr2);
-                    case Tokens.Or:  return Expression.OrElse(subExpr, subExpr2);
+                    case Tokens1960.And: return Expression.AndAlso(subExpr, subExpr2);
+                    case Tokens1960.Or:  return Expression.OrElse(subExpr, subExpr2);
                     default: throw new SyntaxException($"Unrecognized binary operation: {op.MatchedToken}.", op.StartPos, op.EndPos);
                 }
             }
@@ -243,14 +266,14 @@ namespace Linq2Ldap.Core.FilterParser
             int depth = 0;
             for (var i = startPos + 1; i <= endPos; i++) {
                 var tok = tokens.ElementAt(i);
-                if (tok.MatchedToken == Tokens.RightParen)
+                if (tok.MatchedToken == Tokens1960.RightParen)
                 {
                     if (depth == 0) {
                         return i;
                     }
 
                     depth = depth - 1;
-                } else if (tok.MatchedToken == Tokens.LeftParen) {
+                } else if (tok.MatchedToken == Tokens1960.LeftParen) {
                     depth = depth + 1;
                 }
             }
@@ -262,8 +285,8 @@ namespace Linq2Ldap.Core.FilterParser
 
         internal Expression CanonicalBool(Token token) {
             switch(token.MatchedToken) {
-                case Tokens.And: return Expression.Constant(true);
-                case Tokens.Or: return Expression.Constant(false);
+                case Tokens1960.And: return Expression.Constant(true);
+                case Tokens1960.Or: return Expression.Constant(false);
                 default:
                     throw new SyntaxException($"Unrecognized empty expression operator: {token}.", token.StartPos, token.EndPos);
             }

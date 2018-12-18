@@ -141,6 +141,41 @@
             <param name="modelName">An optional model variable name to use in the resulting Expression. Defaults to "m".</param>
             <returns>A predicate Expression representing the input filter and accepting one parameter of type T.</returns>
         </member>
+        <member name="M:Linq2Ldap.Core.FilterParser.LdapFilterParser.#ctor(Linq2Ldap.Core.FilterParser.ILexer,Linq2Ldap.Core.FilterParser.Models.ParserOptions)">
+            <summary>
+            Creates a new LDAP filter parser.
+            </summary>
+            <param name="lexer">The lexer to use. Default: internal implementation.</param>
+            <param name="options">The parsing and lexing options. Defaults include: opts.Target = RFC2254</param>
+        </member>
+        <member name="P:Linq2Ldap.Core.FilterParser.Models.LexerOptions.Target">
+            <summary>
+            RFC standards target. Default: RFC4515.
+            </summary>
+        </member>
+        <member name="P:Linq2Ldap.Core.FilterParser.Models.LexerOptions.StrictCharset">
+            <summary>
+            When true, parser will throw when encountering unescaped, non-RFCTarget characters
+            in the LDAP filter to parse.
+            Ex: Non-RFC4515 characters include 0x00, 0x28-0x2a, 0x5c, and > 0x7f.
+            </summary>
+        </member>
+        <member name="F:Linq2Ldap.Core.FilterParser.Models.RFCTarget.RFC1960">
+            <summary>
+            Earlier RFC that uses \char escaping instead of \hex.
+            </summary>
+        </member>
+        <member name="F:Linq2Ldap.Core.FilterParser.Models.RFCTarget.RFC2254">
+            <summary>
+            Dec 1997 RFC that introduces extended match filters (LDAP v3) and switches to \hex escapes.
+            </summary>
+        </member>
+        <member name="F:Linq2Ldap.Core.FilterParser.Models.RFCTarget.RFC4515">
+            <summary>
+            June 2006 RFC that makes the string representations of LDAP filters suitable
+            for use in LDAP URLs and elsewhere (UTF8).
+            </summary>
+        </member>
         <member name="P:Linq2Ldap.Core.FilterParser.Token.IsDefinedSymbol">
             <summary>
             Indicates whether this is one of the defined symbols.
@@ -186,6 +221,77 @@
             implementing this can be used with LdapFilterParser and LdapFilterCompiler.
             </summary>
         </member>
+        <member name="P:Linq2Ldap.Core.Models.IEntry.Item(System.String,Linq2Ldap.Core.Models.Rule,System.Boolean)">
+            <summary>
+            Extended match filters.
+            </summary>
+            <param name="rule">The matching rule to use.</param>
+            <param name="key">The attribute key.</param>
+            <param name="isDnAttr">Whether this is a dn filter.</param>
+            <returns>An attribute value list for which only the equals operator applies.</returns>
+        </member>
+        <member name="P:Linq2Ldap.Core.Models.IEntry.Item(System.String,Linq2Ldap.Core.Models.Rule)">
+            <summary>
+            Extended match filter to add a match rule.
+            </summary>
+            <param name="rule">The matching rule to use.</param>
+            <param name="key">The attribute key.</param>
+            <returns>An attribute value list for which only the equals operator applies.</returns>
+        </member>
+        <member name="P:Linq2Ldap.Core.Models.IEntry.Item(System.String,System.Boolean)">
+            <summary>
+            Extended match filters for distinguishedNames.
+            </summary>
+            <param name="key">The dn attribute.</param>
+            <param name="isDnAttr">That this is a dn filter.</param>
+            <returns>An attribute value list for which only the equals operator applies.</returns>
+        </member>
+        <member name="P:Linq2Ldap.Core.Models.IEntry.Item(Linq2Ldap.Core.Models.Rule,System.Boolean)">
+            <summary>
+            Extended match filters for distinguishedNames with a match rule.
+            </summary>
+            <param name="rule">Match rule.</param>
+            <param name="isDnAttr">Whether this applies to the dn.</param>
+            <returns>An attribute value list for which only the equals operator applies.</returns>
+        </member>
+        <member name="P:Linq2Ldap.Core.Models.IEntry.Item(Linq2Ldap.Core.Models.Rule)">
+            <summary>
+            Extended match filter without a dn or attribute specified.
+            </summary>
+            <param name="rule">Match rule.</param>
+            <returns>An attribute value list for which only the equals operator applies.</returns>
+        </member>
+        <member name="F:Linq2Ldap.Core.Models.Rule.BitAnd">
+            <summary>
+            Matches only if all bits from the attribute match the value.
+            </summary>
+        </member>
+        <member name="F:Linq2Ldap.Core.Models.Rule.BitOr">
+            <summary>
+            Matches if any bits from the attribute match the value.
+            </summary>
+        </member>
+        <member name="F:Linq2Ldap.Core.Models.Rule.TransitiveEval">
+            <summary>
+            Same as InChain. Limited to DN filters. Walks ancestry chain
+            all the way to the root until it finds a match. E.g., group membership
+            checks like
+            (memberof:1.2.840.113556.1.4.1941:=cn=Group1,OU=groupsOU,DC=x)
+            </summary>
+        </member>
+        <member name="F:Linq2Ldap.Core.Models.Rule.InChain">
+            <summary>
+            Same as TransitiveEval. Limited to DN filters. Walks ancestry chain
+            all the way to the root until it finds a match. E.g., group membership
+            checks like
+            (memberof:1.2.840.113556.1.4.1941:=cn=Group1,OU=groupsOU,DC=x)
+            </summary>
+        </member>
+        <member name="F:Linq2Ldap.Core.Models.Rule.DnWithData">
+            <summary>
+            Provides a way to match portions of DN values.
+            </summary>
+        </member>
         <member name="T:Linq2Ldap.Core.Proxies.AttributeValueList">
             <summary>
             A list of values associated with a particular attribute on a directory entry.
@@ -195,6 +301,11 @@
             <summary>
             A dictionary of attributes on a directory entry. Each key is the attribute name.
             For example, objectClass, cn, or email.
+            </summary>
+        </member>
+        <member name="T:Linq2Ldap.Core.Proxies.EqualsOnlyAttributeValueList">
+            <summary>
+            Attribute value list type for extended filter matches (which only supports == a.k.a :=).
             </summary>
         </member>
         <member name="T:Linq2Ldap.Core.Specifications.Specification`1">

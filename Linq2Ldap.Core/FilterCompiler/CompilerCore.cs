@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using Linq2Ldap.Core.Attributes;
+using Linq2Ldap.Core.FilterCompiler.Models;
 using Linq2Ldap.Core.Models;
 using Linq2Ldap.Core.Proxies;
 using Linq2Ldap.Core.Types;
@@ -14,19 +15,22 @@ namespace Linq2Ldap.Core.FilterCompiler
 {
     public class CompilerCore
     {
-        internal Strings Strings { get; set; }
-        internal BooleanAlgebra BooleanAlgebra { get; set; }
-        internal ValueUtil ValueUtil { get; set; }
+        private CompilerOptions Options { get; }
+        private Strings Strings { get; }
+        private BooleanAlgebra BooleanAlgebra { get; }
+        private ValueUtil ValueUtil { get; }
 
         public CompilerCore(
+            CompilerOptions options,
             Strings strings = null,
             BooleanAlgebra booleanAlgebra = null,
             ValueUtil valueUtil = null
         )
         {
+            Options = options;
             Strings = strings ?? new Strings(this);
             BooleanAlgebra = booleanAlgebra ?? new BooleanAlgebra(this);
-            ValueUtil = valueUtil ?? new ValueUtil();
+            ValueUtil = valueUtil ?? new ValueUtil(Options);
         }
 
         /// <summary>
@@ -111,7 +115,7 @@ namespace Linq2Ldap.Core.FilterCompiler
                 case "Approx":
                     return Strings.ExtensionOpToString(e, p, "~=");
                 case "get_Item":
-                    return __PDictIndexToString(e, p);
+                    return __PDictIndexesToString(e, p);
                 default:
                     throw new NotImplementedException(
                         $"Linq-to-LDAP method calls only implemented for substring comparisons" +
@@ -152,29 +156,66 @@ namespace Linq2Ldap.Core.FilterCompiler
                 $"Linq-to-LDAP method calls not implemented for type: {decType}.");
         }
 
-        internal string __PDictIndexToString(
+        internal string __PDictIndexesToString(
             MethodCallExpression expr,
             IReadOnlyCollection<ParameterExpression> p)
         {
-            var keyExpr = expr.Arguments[0];
-            switch (keyExpr)
+            var conv = expr
+                .Arguments
+                .Select(a => __PDictIndexToObject(a, p))
+                .ToList();
+            try
+            {
+                var attr = (string)conv.SingleOrDefault(c => c is string);
+                var rule = (Rule)conv.SingleOrDefault(c => c is Rule);
+                var isDn = (bool?)conv.SingleOrDefault(c => c is bool);
+                string formatted = attr != null ? attr : "";
+                if (isDn == null && rule == null)
+                    return formatted;
+
+                formatted = formatted + (isDn != null && isDn.Value ? ":dn" : "");
+                formatted = formatted + (rule != null ? $":{rule.RuleCode}" : "");
+                return formatted + ":";
+            }
+            catch (Exception ex)
+            {
+                throw new ArgumentException(
+                    $"Extended match rule format not understood. Please report to author.");
+            }
+        }
+
+        internal object __PDictIndexToObject(
+            Expression indexExpr,
+            IReadOnlyCollection<ParameterExpression> p)
+        {
+            switch (indexExpr)
             {
                 case ConstantExpression e when e.Type == typeof(string):
                     return ValueUtil.EscapeFilterValue(e.Value as string);
+                case ConstantExpression e when e.Type == typeof(Rule):
+                    return (e.Value as Rule);
+                case ConstantExpression e when e.Type == typeof(bool):
+                    return e.Value;
                 case MemberExpression _:
-                    return ValueUtil.EscapeFilterValue(EvalExpr(keyExpr, p));
+                    var raw = RawEvalExpr(indexExpr, p);
+                    if (raw is Rule r)
+                    {
+                        return r;
+                    }
+
+                    return ValueUtil.EscapeFilterValue(raw.ToString());
             }
 
             throw new NotImplementedException(
-                $"LDAP property reference must be a constant string. Was: {expr.Arguments[0].NodeType} / {keyExpr?.Type}");
+                $"LDAP attribute reference must be a constant. Was: {indexExpr.NodeType} / {indexExpr?.Type}");
         }
 
         public string EvalExpr(
             Expression expr, IReadOnlyCollection<ParameterExpression> p)
-            => ValueUtil.EscapeFilterValue(RawEvalExpr(expr, p));
+            => ValueUtil.EscapeFilterValue(RawEvalExpr(expr, p).ToString());
 
 
-        public string RawEvalExpr(
+        public object RawEvalExpr(
             Expression expr, IReadOnlyCollection<ParameterExpression> p)
         {
             switch (expr.NodeType)
@@ -185,7 +226,7 @@ namespace Linq2Ldap.Core.FilterCompiler
                     var objectMember = Expression.Convert(expr, typeof(object));
                     var getterLambda = Expression.Lambda<Func<object>>(objectMember);
                     var getter = getterLambda.Compile();
-                    return getter().ToString();
+                    return getter();
                 default:
                     throw new NotImplementedException(
                         $"Linq-to-LDAP value access not implemented for type {expr.NodeType}.");
@@ -249,7 +290,7 @@ namespace Linq2Ldap.Core.FilterCompiler
             var e = expr as ConstantExpression;
             if (e.Type == typeof(Boolean)) {
                 // The following strings are LDAP filter's canonical true and false, respectively.
-                return (e.Value is Boolean b && b) ? "(&)" : "(|)";
+                return (e.Value is bool b && b) ? "(&)" : "(|)";
             }
 
             if (e.Type != typeof(string)
@@ -271,7 +312,7 @@ namespace Linq2Ldap.Core.FilterCompiler
                 var attr = me.Member.GetCustomAttribute<LdapFieldAttribute>();
                 return ValueUtil.EscapeFilterValue(attr != null ? attr.Name : me.Member.Name);
             } else if (me.Type == typeof(Boolean)) {
-                return RawEvalExpr(me, p) == "True" ? "(&)" : "(|)";
+                return RawEvalExpr(me, p) is bool b && b ? "(&)" : "(|)";
             }
 
             // We could eval it, but may be out of scope?

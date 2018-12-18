@@ -17,8 +17,22 @@ namespace Linq2Ldap.Core.Models
 
         public virtual bool Has(string attrName) => this.Attributes.ContainsKey(attrName);
 
-        public AttributeValueList this[string key] {
-            get => this.Attributes.ContainsKey(key) ? this.Attributes[key] : null;
-        }
+        public AttributeValueList this[string attr]
+            => this.Attributes.ContainsKey(attr) ? this.Attributes[attr] : null;
+
+        public EqualsOnlyAttributeValueList this[string attr, Rule rule, bool isDn]
+            => this.Attributes.ContainsKey(attr) ? this.Attributes[attr] : null;
+
+        public EqualsOnlyAttributeValueList this[string attr, Rule rule]
+            => this[attr, rule, false];
+
+        public EqualsOnlyAttributeValueList this[string attr, bool isDn]
+            => this[attr, null, isDn];
+
+        public EqualsOnlyAttributeValueList this[Rule rule, bool isDn]
+            => this[null, rule, isDn];
+
+        public EqualsOnlyAttributeValueList this[Rule rule]
+            => this[null, rule, false];
     }
 }

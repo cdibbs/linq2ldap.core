@@ -3,6 +3,7 @@ using Linq2Ldap.Core.FilterParser;
 using Xunit;
 using Newtonsoft.Json;
 using System;
+using Linq2Ldap.Core.FilterParser.Models;
 
 namespace Linq2Ldap.Core.Tests.FilterParser {
     public class LexerTests {
@@ -35,7 +36,8 @@ namespace Linq2Ldap.Core.Tests.FilterParser {
             new [] { "(", @"\&var", "=", "b", ")" })]
         [InlineData(@"\\ asdf", new [] { @"\ asdf" })]
         [Theory]
-        public void Lex_DealsWithEscapesAndSpacesCorrectly(string input, string[] expected) {
+        public void Lex_DealsWith1960EscapesAndSpacesCorrectly(string input, string[] expected) {
+            Lexer.Options.Target = RFCTarget.RFC1960;
             var actual = Lexer.Lex(input);
             var actualStrs = actual.Select(t => t.Text).ToArray();
             Assert.Equal(

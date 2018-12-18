@@ -2,6 +2,7 @@
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using Linq2Ldap.Core.FilterCompiler;
+using Linq2Ldap.Core.FilterCompiler.Models;
 using Linq2Ldap.Core.Models;
 
 [assembly: InternalsVisibleTo("Linq2Ldap.Core.Tests")]
@@ -11,10 +12,15 @@ namespace Linq2Ldap.Core.FilterCompiler
     public class LdapFilterCompiler : ILdapFilterCompiler
     {
         protected CompilerCore Core { get; }
+        protected CompilerOptions Options { get; }
 
-        public LdapFilterCompiler(CompilerCore core = null)
+        public LdapFilterCompiler(
+            CompilerCore core = null,
+            CompilerOptions options = null
+        )
         {
-            Core = core ?? new CompilerCore();
+            Options = options ?? new CompilerOptions();
+            Core = core ?? new CompilerCore(Options);
         }
 
         /// <inheritdoc />

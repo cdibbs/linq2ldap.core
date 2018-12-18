@@ -1,19 +1,31 @@
+using Linq2Ldap.Core.FilterParser.Models;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace Linq2Ldap.Core.FilterParser {
     public class Lexer: ILexer {
-        public IEnumerable<Token> Lex(string input) {
+        protected internal LexerOptions Options { get; set; }
+        protected Tokens1960 Tokens { get; set; }
+
+        public Lexer(LexerOptions options = null)
+        {
+            Options = options ?? new LexerOptions() { Target = RFCTarget.RFC1960 };
+            Tokens = new Tokens1960();
+        }
+
+        public virtual IEnumerable<Token> Lex(string input)
+        {
             int i = 0, prevTokEnd = 0;
             Token nextTok = null, ucToken;
             while (i < input.Length) {
                 switch((nextTok = GetNextToken(input, i, nextTok))?.Text) {
-                    case Tokens.EscapedEscape:
+                    case Tokens1960.EscapedEscape:
                         i = i + 2;
                         break;
-                    case Tokens.Escape:
+                    case Tokens1960.Escape:
                     case null:
                         i = i + 1;
                         break;
@@ -34,7 +46,7 @@ namespace Linq2Ldap.Core.FilterParser {
             }
         }
 
-        protected Token GetUserCharsToken(string input, int i, int prevTokEnd) {
+        protected virtual Token GetUserCharsToken(string input, int i, int prevTokEnd) {
             if (i > prevTokEnd) {
                 var raw = input.Substring(prevTokEnd, i - prevTokEnd);
                 raw = UnescapeAndTrim(raw);
@@ -46,8 +58,8 @@ namespace Linq2Ldap.Core.FilterParser {
             return null;
         }
 
-        protected Token GetNextToken(string input, int i, Token curToken) {
-            if (Tokens.Escape == curToken?.Text) {
+        protected virtual Token GetNextToken(string input, int i, Token curToken) {
+            if (Tokens1960.Escape == curToken?.Text) {
                 return null;
             }
 
@@ -64,7 +76,7 @@ namespace Linq2Ldap.Core.FilterParser {
             return null;
         }
 
-        protected string UnescapeAndTrim(string raw) {
+        protected virtual string UnescapeAndTrim(string raw) {
             raw = string.Join("", Regex.Split(raw, @"^(?<!(?<!\\)\\) +"));
             raw = string.Join("", Regex.Split(raw, @"(?<!(?<!\\)\\) +$"));
             return string.Join("", Regex.Split(raw, @"(?<!(?<!\\)\\)\\"));

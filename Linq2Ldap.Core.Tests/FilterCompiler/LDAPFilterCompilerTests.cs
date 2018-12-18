@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Text;
 using Linq2Ldap.Core.FilterCompiler;
+using Linq2Ldap.Core.FilterCompiler.Models;
 using Linq2Ldap.Core.Models;
 using Xunit;
 
@@ -15,7 +16,7 @@ namespace Linq2Ldap.Core.Tests.FilterCompiler
         public LdapFilterCompilerTests()
         {
             FilterCompiler = new LdapFilterCompiler();
-            Core = new CompilerCore();
+            Core = new CompilerCore(new CompilerOptions());
         }
 
         [Fact]
@@ -32,14 +33,14 @@ namespace Linq2Ldap.Core.Tests.FilterCompiler
         public void Compile_EscapesIndexerNames() {
             Expression<Func<TestLdapModel, bool>> expr = (TestLdapModel e) => e["one "] == "123";
             var filter = Core.ExpressionToString(expr.Body, expr.Parameters);
-            Assert.Equal(@"(one\ =123)", filter);
+            Assert.Equal(@"(one\20=123)", filter);
         }
 
         [Fact]
         public void Compile_EscapesPropertyNames() {
             Expression<Func<TestLdapModel, bool>> expr = (TestLdapModel e) => e.WeirdName == "123";
             var filter = Core.ExpressionToString(expr.Body, expr.Parameters);
-            Assert.Equal(@"(\ we ird\ \ =123)", filter);
+            Assert.Equal(@"(\20we ird\20\20=123)", filter);
         }
 
         [Fact]
@@ -62,6 +63,30 @@ namespace Linq2Ldap.Core.Tests.FilterCompiler
             Func<string> testfn = () => "samaccountname"; // TestLdapModel can always invoke prior to express
             Expression<Func<TestLdapModel, bool>> expr1 = (TestLdapModel u) => u.Attributes[testfn()] == "123";
             Assert.Throws<NotImplementedException>(() => FilterCompiler.Compile(expr1));
+        }
+
+        [Fact]
+        public void Compile_ExtendedIndexes_DnFilter()
+        {
+            Expression<Func<Entry, bool>> expr = e => e["ou", true] == "something";
+            var result = FilterCompiler.Compile(expr);
+            Assert.Equal("(ou:dn:=something)", result);
+        }
+
+        [Fact]
+        public void Compile_ExtendedIndexes_DnFilterWithRule()
+        {
+            Expression<Func<Entry, bool>> expr = e => e["ou", Rule.InChain, true] == "something";
+            var result = FilterCompiler.Compile(expr);
+            Assert.Equal($"(ou:dn:{Rule.InChain.RuleCode}:=something)", result);
+        }
+
+        [Fact]
+        public void Compile_ExtendedIndexes_FilterWithRule()
+        {
+            Expression<Func<Entry, bool>> expr = e => e["member", Rule.InChain] == "something";
+            var result = FilterCompiler.Compile(expr);
+            Assert.Equal($"(member:{Rule.InChain.RuleCode}:=something)", result);
         }
 
         [Fact]
@@ -102,7 +127,7 @@ namespace Linq2Ldap.Core.Tests.FilterCompiler
         public void Compile_EscapesValues() {
             Expression<Func<TestLdapModel, bool>> e = (TestLdapModel u) => u.CommonName == @"must*escape\this(please)";
             var result = FilterCompiler.Compile(e);
-            Assert.Equal(@"(cn=must\*escape\\this\(please\))", result);
+            Assert.Equal(@"(cn=must\2aescape\5cthis\28please\29)", result);
         }
     }
 

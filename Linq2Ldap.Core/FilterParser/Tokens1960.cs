@@ -1,9 +1,12 @@
 using System.Collections.Generic;
 
 namespace Linq2Ldap.Core.FilterParser {
-    public static class Tokens {
-        public static readonly Dictionary<string, string> Lookup
-            = new Dictionary<string, string>() {
+    public class Tokens1960 {
+        public Dictionary<string, string> Lookup { get; protected set; }
+
+        public Tokens1960()
+        {
+            Lookup = new Dictionary<string, string>() {
                 //  (?<= non-capturing look-behind
                 //      \G to match only where previous match left off
                 //        (\\\\)*) and only when an even number of backslashes (when operator unescaped).
@@ -21,6 +24,8 @@ namespace Linq2Ldap.Core.FilterParser {
                 { @"(?<=\G(\\\\)*)\\\\",            EscapedEscape },
                 { @"(?<=\G(\\\\)*)\\",              Escape },
             };
+        }
+
 
         public const string LeftParen = "(";
         public const string RightParen = ")";

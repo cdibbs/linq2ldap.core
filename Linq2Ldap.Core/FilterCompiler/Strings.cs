@@ -71,13 +71,13 @@ namespace Linq2Ldap.Core.FilterCompiler
             if (me2 == null && me != null)
             {
                 left = Core._MemberToString(me, p);
-                right = escape ? Core.EvalExpr(rightExpr, p) : Core.RawEvalExpr(rightExpr, p);
+                right = escape ? Core.EvalExpr(rightExpr, p) : Core.RawEvalExpr(rightExpr, p).ToString();
                 op = _AdjustCompares(op, origOp, val, isReverse);
             }
             else if (me2 != null && me == null)
             {
                 left = Core._MemberToString(me2, p);
-                right = escape ? Core.EvalExpr(leftExpr, p) : Core.RawEvalExpr(leftExpr, p);
+                right = escape ? Core.EvalExpr(leftExpr, p) : Core.RawEvalExpr(leftExpr, p).ToString();
                 op = _AdjustCompares(op, origOp, val, !isReverse);
             }
             else
@@ -108,7 +108,7 @@ namespace Linq2Ldap.Core.FilterCompiler
                 {"=", new Dictionary<int, string>() {{-1, "<"}, {0, "="}, {1, ">"}}},
                 {"~=", new Dictionary<int, string>() {{-1, "~="}, {0, "~="}, {1, "~="}}},
 
-                // Some of these (marked /* ! */) will be negated for RFC 1960 compat.
+                // Some of these (marked /* ! */) will be negated for RFC 1960/2254 compat.
                 {"<", new Dictionary<int, string>() {{-1, "NA"}, {0, /* ! */ ">="}, {1, "<="}}},
                 {">", new Dictionary<int, string>() {{-1, ">="}, {0, /* ! */ "<="}, {1, "NA"}}},
             };
