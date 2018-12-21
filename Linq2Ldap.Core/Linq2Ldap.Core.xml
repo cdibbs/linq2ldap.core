@@ -308,18 +308,6 @@
             Attribute value list type for extended filter matches (which only supports == a.k.a :=).
             </summary>
         </member>
-        <member name="T:Linq2Ldap.Core.Specifications.Specification`1">
-            <summary>
-            A specification is an expression that given an object of type T, produces
-            true if the object satisifies the expression and false otherwise.
-            </summary>
-            <typeparam name="T"></typeparam>
-        </member>
-        <member name="P:Linq2Ldap.Core.Specifications.Specification`1.Metadata">
-            <summary>
-            Used to record debugging information about the spec.
-            </summary>
-        </member>
         <member name="T:Linq2Ldap.Core.Types.BaseLdapManyType`2">
             <summary>
             Facilitates treatment of attribute value lists as though they were single-valued,

@@ -27,8 +27,4 @@
     <OutputPath>bin\Release</OutputPath>
     <DocumentationFile>bin\Release\Linq2Ldap.Core.xml</DocumentationFile>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="LINQKit.Core" Version="1.1.15" />
-  </ItemGroup>
 </Project>
