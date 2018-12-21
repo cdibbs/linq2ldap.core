@@ -8,8 +8,8 @@
 # Linq2Ldap.Core
 
 This is the core transpiler and parser behind the Linq2Ldap.* NuGet libraries. It can
-transpile C# LINQ Expressions into RFC 1960 LDAP filter strings, and it can parse them
-back out, again.
+transpile C# LINQ Expressions into RFC 4451 (or, optionally, 2254/1960) LDAP filter strings,
+and it can parse them back out, again.
 
 If you only want to use the filter transpiler with no additional abstraction,
 you can do this:
@@ -18,7 +18,7 @@ you can do this:
     // Goal: produce this filter string from a LINQ Expression
     //     filter = "(&(samaccountname=will*)(&(email=*uiowa*)(!(customprop=123))))";
     
-    string filter = new LdapFilterCompiler().CompileFromLinq(
+    string filter = new LdapFilterCompiler().Compile(
         (MyUserModel u)
                     => u.SamAccountName.StartsWith("will")
                     && u.Email.Contains("uiowa")

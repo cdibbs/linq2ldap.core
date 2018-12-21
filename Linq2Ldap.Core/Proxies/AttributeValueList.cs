@@ -20,15 +20,6 @@ namespace Linq2Ldap.Core.Proxies
         {
         }
 
-        public IntList CompareTo(string other)
-        {
-            var results = new IntList();
-            foreach (var v in this) {
-                results.Add(string.CompareOrdinal(v.ToString(), other));
-            }
-            return results;
-        }
-
         public static bool operator ==(AttributeValueList a, string b)
             => a?.Any(m => string.CompareOrdinal(m.ToString(), b) == 0)
                 ?? b == null;
