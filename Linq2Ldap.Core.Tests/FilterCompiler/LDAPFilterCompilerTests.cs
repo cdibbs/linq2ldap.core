@@ -4,7 +4,9 @@ using System.Linq.Expressions;
 using System.Text;
 using Linq2Ldap.Core.FilterCompiler;
 using Linq2Ldap.Core.FilterCompiler.Models;
+using Linq2Ldap.Core.FilterParser;
 using Linq2Ldap.Core.Models;
+using Linq2Ldap.Core.Proxies;
 using Xunit;
 
 namespace Linq2Ldap.Core.Tests.FilterCompiler
@@ -128,6 +130,47 @@ namespace Linq2Ldap.Core.Tests.FilterCompiler
             Expression<Func<TestLdapModel, bool>> e = (TestLdapModel u) => u.CommonName == @"must*escape\this(please)";
             var result = FilterCompiler.Compile(e);
             Assert.Equal(@"(cn=must\2aescape\5cthis\28please\29)", result);
+        }
+
+        [InlineData("one", "onediff", "two", "twodiff", "three", "threediff", false)]
+        [InlineData("one", "onediff", "two", "twodiff", "three", "three", true)]
+        [InlineData("one", "one", "two", "twodiff", "three", "threediff", false)]
+        [InlineData("one", "one", "two", "two", "three", "threediff", true)]
+        [InlineData("one", "one", "two", "two", "three", "three", true)]
+        [InlineData("one", "onediff", "two", "two", "three", "threediff", false)]
+        [InlineData("one", "onediff", "two", "two", "three", "three", true)]
+        [Theory]
+        public void Compile_ConvertsTernaryToBooleanAlgebra(
+            string a, string b, string c, string d, string e, string f, bool expected)
+        {
+            Expression<Func<TestLdapModel, bool>> expr
+                = (TestLdapModel m) => m["a"] == b ? m["c"] == d : m["e"] == f;
+            var comp = FilterCompiler.Compile(expr);
+            var parsed = new LdapFilterParser().Parse<TestLdapModel>(comp);
+
+            var model = new TestLdapModel()
+            {
+                Attributes = new EntryAttributeDictionary()
+                {
+                    { "a", new AttributeValueList(a) },
+                    { "c", new AttributeValueList(c) },
+                    { "e", new AttributeValueList(e) }
+                }
+            };
+
+            var ternResult = expr.Compile()(model);
+            var parsedResult = parsed.Compile()(model);
+            Assert.Equal(expected, ternResult);
+            Assert.Equal(expected, parsedResult);
+        }
+
+        [Fact]
+        public void Compile_ThrowsSensibleErrorForTwoAttrComparison()
+        {
+            Expression<Func<TestLdapModel, bool>> expr = e => e["a"] == e["b"];
+            var ex = Assert.Throws<InvalidOperationException>(() => FilterCompiler.Compile(expr));
+            Assert.Contains("Right side", ex.Message);
+            Assert.Contains("must be a constant", ex.Message);
         }
     }
 

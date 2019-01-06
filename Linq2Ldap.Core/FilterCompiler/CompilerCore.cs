@@ -78,15 +78,26 @@ namespace Linq2Ldap.Core.FilterCompiler
                     return _Negate(_MaybeStringCompareToExpr(expr, p, /* not */ "=")
                            ?? _ComparisonExprToString(expr, p, /* not */ "="));
 
-                // Low-priority/do not implement:
                 case ExpressionType.Conditional: /* ternary */
+                    return _TernaryToBooleanAlgebra(expr, p);
+
+                // Low-priority/do not implement:
                 default:
                     throw new NotImplementedException(
                         $"Linq-to-LDAP not implemented for {expr.NodeType}. \n"
                         + "Use local variables to remove algebraic expressions and method calls, \n"
-                        + "and reduce Linq expression complexity to boolean algebra and \n"
-                        + ".Contains/.StartsWith/.EndsWith string ops.");
+                        + "and reduce Linq expression complexity to boolean algebra and string ops.\n"
+                        + "Please see the Linq2Ldap project site.");
             }
+        }
+
+        private string _TernaryToBooleanAlgebra(Expression expr, IReadOnlyCollection<ParameterExpression> p)
+        {
+            var tern = expr as ConditionalExpression;
+            var test = ExpressionToString(tern.Test, p);
+            var whenTrue = ExpressionToString(tern.IfTrue, p);
+            var whenFalse = ExpressionToString(tern.IfFalse, p);
+            return $"(|(&{test}{whenTrue})(&(!{test}){whenFalse}))";
         }
 
         internal string _CallExprToString(
@@ -249,8 +260,14 @@ namespace Linq2Ldap.Core.FilterCompiler
             var trueRight = e.Right;
 
             var left = ExpressionToString(trueLeft, p);
-            var right = EvalExpr(trueRight, p);
-            return $"({left}{op}{right})";
+            try
+            {
+                var right = EvalExpr(trueRight, p);
+                return $"({left}{op}{right})";
+            } catch (NotImplementedException ex)
+            {
+                throw new InvalidOperationException($"Right side of LDAP comparison must be a constant.");
+            }
         }
 
         internal string _MaybeStringCompareToExpr(
