@@ -8,7 +8,7 @@
 # Linq2Ldap.Core
 
 This is the core compiler and parser behind the Linq2Ldap.* NuGet libraries. It can
-compile C# LINQ Expressions into RFC 4451 (or 2254/1960) LDAP filter strings,
+compile C# LINQ Expressions into RFC 4515 (or 2254/1960) LDAP filter strings,
 and it can parse an LDAP filter into a LINQ Expression.
 
 If you only want to use the filter compiler with no additional abstraction,
