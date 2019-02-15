@@ -7,11 +7,11 @@
 
 # Linq2Ldap.Core
 
-This is the core transpiler and parser behind the Linq2Ldap.* NuGet libraries. It can
-transpile C# LINQ Expressions into RFC 4451 (or, optionally, 2254/1960) LDAP filter strings,
-and it can parse them back out, again.
+This is the core compiler and parser behind the Linq2Ldap.* NuGet libraries. It can
+compile C# LINQ Expressions into RFC 4515 (or 2254/1960) LDAP filter strings,
+and it can parse an LDAP filter into a LINQ Expression.
 
-If you only want to use the filter transpiler with no additional abstraction,
+If you only want to use the filter compiler with no additional abstraction,
 you can do this:
 
 ```c#
@@ -32,7 +32,7 @@ you can do this:
     var searchReq = new SearchRequest(targetOu, filter, /* ... */);
 ```
 
-Also supported examples:
+Also supported query examples:
 
 ```c#
 (MyUserModel u) => u.Title.Matches("univ*of*iowa"); // (title=univ*of*iowa)
