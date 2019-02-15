@@ -61,30 +61,47 @@ namespace Linq2Ldap.Core {
                 return;
             }
 
-            var ldapName = attr?.Name ?? prop.Name;
-            AttributeValueList val;
-            if (! entryProps.ContainsKey(ldapName)) {
-                if (! attr.Optional) {
-                    throw new ArgumentException(
-                        $"Column attribute {attr.Name} is not marked as optional, but was not"
-                        + " found in the store.");
-                }
-
-                val = null;
-            } else {
-                val = entryProps[ldapName];
-            }
-
-            if (prop.CanWrite)
-            {
-                ValidateTypeConvertAndSet(model, val, prop, ldapName);
-            }
-            else
+            var ldapAttrName = attr?.Name ?? prop.Name;
+            if (!prop.CanWrite)
             {
                 throw new ArgumentException(
-                    $"Column attribute {attr.Name} applied to property {prop.Name}, "
+                    $"Column attribute '{ldapAttrName}' applied to property '{prop.Name}' on type '{typeof(T).FullName}', "
                     + $"but {prop.Name} is not writable.");
             }
+
+            try
+            {
+                var val = GetAttributeRawValue<T>(ldapAttrName, prop, entryProps, attr);
+                ValidateTypeConvertAndSet(model, val, prop, ldapAttrName);
+            }
+            catch (Exception ex)
+            {
+                throw new ArgumentException(
+                    $"Error converting LDAP attribute '{ldapAttrName}' for property '{prop.Name}' on type '{typeof(T).FullName}'."
+                    , ex);
+            }
+
+        }
+
+        protected internal AttributeValueList GetAttributeRawValue<T>(
+            string ldapAttrName,
+            PropertyInfo prop,
+            EntryAttributeDictionary entryProps,
+            LdapFieldAttribute attr)
+        {
+            if (! (entryProps.ContainsKey(ldapAttrName) || attr.Optional))
+            {
+                throw new ArgumentException(
+                    $"LDAP attribute '{attr.Name}' for property '{prop.Name}' on type '{typeof(T).FullName}'"
+                    +" is not marked as optional, but was not found in the store.");
+            }
+
+            if (entryProps.TryGetValue(ldapAttrName, out var val))
+            {
+                return val;
+            }
+
+            return null;
         }
 
         protected internal void ValidateTypeConvertAndSet<T>(

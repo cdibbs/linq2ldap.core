@@ -30,5 +30,16 @@ namespace Linq2Ldap.Core.IntegrationTest
             Assert.Equal(result.Mail2, result.Mail);
             Assert.Equal(result.Number2, (int)result.Number);
         }
+
+        [Fact]
+        public void Create_ConversionError_InformsOfAttribute()
+        {
+            var props = new Dictionary<string, AttributeValueList>();
+            var properties = new EntryAttributeDictionary(props);
+            var ex = Assert.Throws<ArgumentException>(() => ModelCreator.Create<MyModel>(properties, "bogus path"));
+
+            Assert.Contains("mail", ex.Message);
+            Assert.NotNull(ex.InnerException);
+        }
     }
 }
