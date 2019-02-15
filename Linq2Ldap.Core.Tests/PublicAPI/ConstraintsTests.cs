@@ -35,14 +35,16 @@ namespace Linq2Ldap.Core.Tests.PublicAPI
                 .Where(t => t.IsClass || t.IsInterface || t.IsEnum)
                 .SelectMany(t => t.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly))
                 .Where(t => t.IsGenericMethod)
-                .Select(m => new object[] { m.DeclaringType.FullName, m.Name, m.GetGenericArguments(), forbidden });
+                .Select(m => new object[] {m.DeclaringType.FullName, m.Name, m.GetGenericArguments(), forbidden})
+                .Distinct();
 
         public static IEnumerable<object[]> GenericEntityRefsFinder(Type forbidden)
             => assembly.GetTypes()
                 .Where(t =>
                     (t.IsClass || t.IsInterface || t.IsEnum)
                     && t.IsGenericTypeDefinition)
-                .Select(t => new object[] { t.FullName, null, t.GetGenericArguments(), forbidden } );
+                .Select(t => new object[] { t.FullName, null, t.GetGenericArguments(), forbidden } )
+                .Distinct();
 
     }
 }
