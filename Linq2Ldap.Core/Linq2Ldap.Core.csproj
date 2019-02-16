@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <APPVEYOR_BUILD_NUMBER Condition=" '$(APPVEYOR_BUILD_NUMBER)' == '' ">local</APPVEYOR_BUILD_NUMBER>
     <PackageVersion>1.5.1-alpha$(APPVEYOR_BUILD_NUMBER)</PackageVersion>
     <PackageId>Linq2Ldap.Core</PackageId>
