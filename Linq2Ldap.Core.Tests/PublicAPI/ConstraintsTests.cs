@@ -9,6 +9,12 @@ using Xunit;
 
 namespace Linq2Ldap.Core.Tests.PublicAPI
 {
+    /// <summary>
+    /// (Tracking xunit/R# issues:
+    ///   https://youtrack.jetbrains.com/issue/RSRP-473944
+    ///   https://github.com/xunit/xunit/issues/1916
+    /// )
+    /// </summary>
     public class ConstraintsTests
     {
         private static Assembly assembly;
@@ -17,8 +23,8 @@ namespace Linq2Ldap.Core.Tests.PublicAPI
             assembly = Assembly.GetAssembly(typeof(LdapFilterCompiler));
         }
 
-        [MemberData(nameof(GenericMethodRefsFinder), typeof(Entry))]
-        [MemberData(nameof(GenericEntityRefsFinder), typeof(Entry))]
+        [MemberData(nameof(GenericMethodRefsFinder), parameters: typeof(Entry), DisableDiscoveryEnumeration = true)]
+        [MemberData(nameof(GenericEntityRefsFinder), parameters: typeof(Entry), DisableDiscoveryEnumeration = true)]
         [Theory]
         // Must always allow user to provide their own implementation of, e.g., IEntry.
         public void NeverUsedAsConstraint(string typeName, string methodName, Type[] args, Type forbidden)
