@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <APPVEYOR_BUILD_NUMBER Condition=" '$(APPVEYOR_BUILD_NUMBER)' == '' ">local</APPVEYOR_BUILD_NUMBER>
-    <PackageVersion>1.5.1-alpha$(APPVEYOR_BUILD_NUMBER)</PackageVersion>
+    <PackageVersion>1.6.0-alpha$(APPVEYOR_BUILD_NUMBER)</PackageVersion>
     <PackageId>Linq2Ldap.Core</PackageId>
     <Title>LINQ-to-LDAP filter transpiler</Title>
     <Description>Compile LDAP filter strings (RFC 1960/2254/4515) from LINQ Expressions, or parse them into LINQ Expressions. (Appreciate this unencumbered FOSS library? Visit git.io/fp0Yr in your browser.)</Description>
@@ -11,7 +11,7 @@
     <RepositoryUrl>https://github.com/cdibbs/linq2ldap</RepositoryUrl>
     <PackageLicenseUrl>https://github.com/cdibbs/linq2ldap/blob/master/LICENSE</PackageLicenseUrl>
     <Authors>Chris Dibbern</Authors>
-    <PackageReleaseNotes>Improving common exception messages.</PackageReleaseNotes>
+    <PackageReleaseNotes>Fixing bug in attr.Matches/Approx. Adding .Any() shorthand.</PackageReleaseNotes>
     <PackageTags>LDAP;LINQ;Expression;Compiler;Parser;AD;Active Directory;OpenLDAP</PackageTags>
     <LangVersion>7.1</LangVersion>
   </PropertyGroup>

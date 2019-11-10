@@ -72,6 +72,24 @@ namespace Linq2Ldap.Core.Tests.FilterCompiler
             Assert.Equal("(alt-emails=*someone)", c(m => m.AltEmails.EndsWith("someone")));
             Assert.Equal("(alt-emails=*)", c(m => m.AltEmails.Matches("*")));
             Assert.Equal("(alt-emails~=*)", c(m => m.AltEmails.Approx("*")));
+            Assert.Equal("(alt-emails=*)", c(m => m.AltEmails.Any()));
+        }
+
+        [Fact]
+        public void CustomManyType_CompilesToCorrectStrings_ForRawBag()
+        {
+            Func<Expression<Func<TestLdapModel, bool>>, string> c = FilterCompiler.Compile<TestLdapModel>;
+            Assert.Equal("(alt-emails=someone@example.com)", c(m => m["alt-emails"] == "someone@example.com"));
+            Assert.Equal("(alt-emails>=someone@example.com)", c(m => m["alt-emails"] >= "someone@example.com"));
+            Assert.Equal("(!(alt-emails<=someone@example.com))", c(m => m["alt-emails"] > "someone@example.com"));
+            Assert.Equal("(alt-emails=*someone*)", c(m => m["alt-emails"].Contains("someone")));
+            Assert.Equal("(alt-emails=someone*)", c(m => m["alt-emails"].StartsWith("someone")));
+            Assert.Equal("(alt-emails=*someone)", c(m => m["alt-emails"].EndsWith("someone")));
+            Assert.Equal("(alt-emails~=*)", c(m => m["alt-emails"].Approx("*")));
+            Assert.Equal("(alt-emails~=*asdf*asdf)", c(m => m["alt-emails"].Approx("*asdf*asdf")));
+            Assert.Equal("(alt-emails=*)", c(m => m["alt-emails"].Matches("*")));
+            Assert.Equal("(alt-emails=*asdf*asdf)", c(m => m["alt-emails"].Matches("*asdf*asdf")));
+            Assert.Equal("(alt-emails=*)", c(m => m["alt-emails"].Any()));
         }
 
         public static IEnumerable<object[]> StringOpData()

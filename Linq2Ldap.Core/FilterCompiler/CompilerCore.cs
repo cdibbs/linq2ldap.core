@@ -113,6 +113,8 @@ namespace Linq2Ldap.Core.FilterCompiler
             AssertValidUnderlyingType(type);
             switch (name)
             {
+                case "Any":
+                    return Strings.AnyExtensionOpToString(e, p);
                 case "Contains":
                     return Strings.OpToString(e, p, validSubExprs, "({0}=*{1}*)");
                 case "StartsWith":
@@ -136,6 +138,7 @@ namespace Linq2Ldap.Core.FilterCompiler
 
         internal void AssertValidUnderlyingType(Type decType) {
             var simpleTypes = new Type[] {
+                typeof(System.Linq.Enumerable),
                 typeof(string),
                 typeof(Linq2Ldap.Core.Proxies.AttributeValueList),
                 typeof(Dictionary<string, AttributeValueList>),
@@ -284,7 +287,7 @@ namespace Linq2Ldap.Core.FilterCompiler
             return null;
         }
 
-        internal MemberExpression __IsParamModelAccess(Expression e, IReadOnlyCollection<ParameterExpression> p)
+        internal Expression __IsParamModelAccess(Expression e, IReadOnlyCollection<ParameterExpression> p)
         {
             if (e is MemberExpression me && me.Expression == p.FirstOrDefault())
             {
@@ -296,6 +299,9 @@ namespace Linq2Ldap.Core.FilterCompiler
                      && ume.Expression == p.FirstOrDefault())
             {
                 return ume;
+            } else if (e is MethodCallExpression mce && mce.Method.Name == "get_Item")
+            {
+                return mce;
             }
 
             return null;
@@ -322,18 +328,20 @@ namespace Linq2Ldap.Core.FilterCompiler
         }
 
         internal string _MemberToString(
-            MemberExpression me, IReadOnlyCollection<ParameterExpression> p)
+            Expression e, IReadOnlyCollection<ParameterExpression> p)
         {
-            if (__IsParamModelAccess(me, p) != null)
+            if (e is MemberExpression me && me.Expression == p.FirstOrDefault())
             {
                 var attr = me.Member.GetCustomAttribute<LdapFieldAttribute>();
                 return ValueUtil.EscapeFilterValue(attr != null ? attr.Name : me.Member.Name);
-            } else if (me.Type == typeof(Boolean)) {
-                return RawEvalExpr(me, p) is bool b && b ? "(&)" : "(|)";
+            } else if (e.Type == typeof(Boolean)) {
+                return RawEvalExpr(e, p) is bool b && b ? "(&)" : "(|)";
+            } else if (e is MethodCallExpression mce && mce.Arguments.FirstOrDefault()?.Type == typeof(string)) {
+                return __PDictIndexesToString(mce, p);
             }
 
             // We could eval it, but may be out of scope?
-            throw new NotImplementedException($"Out-of-scope member expression: {me.Member.Name}.");
+            throw new NotImplementedException($"Unable to evaluate member expression: {e.Type}.");
         }
     }
 }

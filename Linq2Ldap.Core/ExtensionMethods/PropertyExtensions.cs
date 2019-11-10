@@ -117,6 +117,41 @@ namespace Linq2Ldap.Core.ExtensionMethods {
         }
 
         /// <summary>
+        /// Alias for .Matches("*").
+        /// </summary>
+        /// <param name="source">The string source.</param>
+        /// <returns>True, if it matches.</returns>
+        public static bool Any(this string source) => Matches(source, "*");
+
+        /// <summary>
+        /// Alias for .Matches("*").
+        /// </summary>
+        /// <param name="source">The multi-valued source.</param>
+        /// <returns>True, if it matches.</returns>
+        public static bool Any<T, U>(this BaseLdapManyType<T, U> source)
+            where T : IComparable
+            where U : class, IConverter<List<T>>
+            => Matches<T, U>(source, "*");
+
+        /// <summary>
+        /// Alias for .Matches("*").
+        /// </summary>
+        /// <param name="source">The source data.</param>
+        /// <returns>True, if it matches.</returns>
+        public static bool Any<T, TConv>(this BaseLdapType<T, TConv> source)
+            where T : IComparable
+            where TConv : class, IConverter<T>
+            => Matches(source, "*");
+
+        /// <summary>
+        /// Alias for .Matches("*").
+        /// </summary>
+        /// <param name="source">The multi-valued source.</param>
+        /// <returns>True, if it matches.</returns>
+        public static bool Any(this AttributeValueList source)
+            => Matches(source, "*");
+
+        /// <summary>
         /// Checks whether the pattern approximately matches (~=) the source string.
         /// Warning: locally, this does a lower-invariant .Match(). This may not line
         /// up with LDAP implementations. Take local, unit test results with a grain of salt.

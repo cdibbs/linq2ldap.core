@@ -58,6 +58,34 @@
             <param name="pattern">The LDAP filter pattern (ex: some*thing).</param>
             <returns>True, if it matches.</returns>
         </member>
+        <member name="M:Linq2Ldap.Core.ExtensionMethods.PropertyExtensions.Any(System.String)">
+            <summary>
+            Alias for .Matches("*").
+            </summary>
+            <param name="source">The string source.</param>
+            <returns>True, if it matches.</returns>
+        </member>
+        <member name="M:Linq2Ldap.Core.ExtensionMethods.PropertyExtensions.Any``2(Linq2Ldap.Core.Types.BaseLdapManyType{``0,``1})">
+            <summary>
+            Alias for .Matches("*").
+            </summary>
+            <param name="source">The multi-valued source.</param>
+            <returns>True, if it matches.</returns>
+        </member>
+        <member name="M:Linq2Ldap.Core.ExtensionMethods.PropertyExtensions.Any``2(Linq2Ldap.Core.Types.BaseLdapType{``0,``1})">
+            <summary>
+            Alias for .Matches("*").
+            </summary>
+            <param name="source">The source data.</param>
+            <returns>True, if it matches.</returns>
+        </member>
+        <member name="M:Linq2Ldap.Core.ExtensionMethods.PropertyExtensions.Any(Linq2Ldap.Core.Proxies.AttributeValueList)">
+            <summary>
+            Alias for .Matches("*").
+            </summary>
+            <param name="source">The multi-valued source.</param>
+            <returns>True, if it matches.</returns>
+        </member>
         <member name="M:Linq2Ldap.Core.ExtensionMethods.PropertyExtensions.Approx(System.String,System.String)">
             <summary>
             Checks whether the pattern approximately matches (~=) the source string.

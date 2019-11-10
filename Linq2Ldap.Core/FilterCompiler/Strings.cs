@@ -61,6 +61,27 @@ namespace Linq2Ldap.Core.FilterCompiler
             return _NormalizeStringCompareAsString(0, pair.ElementAt(0), pair.ElementAt(1), p, op, op, false, false);
         }
 
+        public string AnyExtensionOpToString(
+            MethodCallExpression e, IReadOnlyCollection<ParameterExpression> p)
+        {
+            Expression argExpr;
+            if (e.Arguments.Count > 1
+                || (argExpr = e.Arguments.First()) == null)
+            {
+                throw new NotImplementedException(
+                    $"Linq-to-LDAP string comparisons must have two, non-null parameters.");
+            }
+
+            var me = Core.__IsParamModelAccess(argExpr, p);
+            var access = Core._MemberToString(me, p);
+            if (access == null)
+            {
+                throw new NotImplementedException(".Any extension parameter does not reference member.");
+            }
+
+            return $"({access}=*)";
+        }
+
         internal string _NormalizeStringCompareAsString(
             int val, Expression leftExpr, Expression rightExpr,
             IReadOnlyCollection<ParameterExpression> p, string op, string origOp, bool isReverse, bool escape = true)

@@ -94,5 +94,37 @@ namespace Linq2Ldap.Core.Tests.ExtensionMethods {
             var actual = p.Approx(pattern);
             Assert.Equal(expected, actual);
         }
+
+        [Fact]
+        public void Any_ProxyValues_MatchesAny()
+        {
+            var input = new object[] { "abc", "123", "456" };
+            var p = new AttributeValueList(new List<object>(input));
+            Assert.True(p.Any());
+        }
+
+        [Fact]
+        public void Any_LdapInt_MatchesAny()
+        {
+            var input = new object[] { 123, 456, 789 };
+            var p = new LdapInt(new AttributeValueList(new List<object>(input)));
+            Assert.True(p.Any());
+        }
+
+        [Fact]
+        public void Any_LdapStringList_MatchesAny()
+        {
+            var input = new string[] { "abc", "123", "456" };
+            var p = (LdapStringList)input;
+            Assert.True(p.Any());
+        }
+
+        [Fact]
+        public void Any_MatchesAny()
+        {
+            var input = "somestring";
+            Assert.True(input.Any());
+        }
+
     }
 }
