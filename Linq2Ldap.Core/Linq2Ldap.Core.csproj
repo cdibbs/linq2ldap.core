@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <APPVEYOR_BUILD_NUMBER Condition=" '$(APPVEYOR_BUILD_NUMBER)' == '' ">local</APPVEYOR_BUILD_NUMBER>
-    <PackageVersion>1.6.0-alpha$(APPVEYOR_BUILD_NUMBER)</PackageVersion>
+    <PackageVersion>1.6.1-alpha$(APPVEYOR_BUILD_NUMBER)</PackageVersion>
     <PackageId>Linq2Ldap.Core</PackageId>
     <Title>LINQ-to-LDAP filter transpiler</Title>
     <Description>Compile LDAP filter strings (RFC 1960/2254/4515) from LINQ Expressions, or parse them into LINQ Expressions.</Description>
