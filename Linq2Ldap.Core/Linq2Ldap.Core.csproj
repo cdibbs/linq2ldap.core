@@ -6,7 +6,7 @@
     <PackageVersion>1.6.0-alpha$(APPVEYOR_BUILD_NUMBER)</PackageVersion>
     <PackageId>Linq2Ldap.Core</PackageId>
     <Title>LINQ-to-LDAP filter transpiler</Title>
-    <Description>Compile LDAP filter strings (RFC 1960/2254/4515) from LINQ Expressions, or parse them into LINQ Expressions. (Appreciate this unencumbered FOSS library? Visit git.io/fp0Yr in your browser.)</Description>
+    <Description>Compile LDAP filter strings (RFC 1960/2254/4515) from LINQ Expressions, or parse them into LINQ Expressions.</Description>
     <PackageProjectUrl>https://github.com/cdibbs/linq2ldap</PackageProjectUrl>
     <RepositoryUrl>https://github.com/cdibbs/linq2ldap</RepositoryUrl>
     <PackageLicenseUrl>https://github.com/cdibbs/linq2ldap/blob/master/LICENSE</PackageLicenseUrl>
