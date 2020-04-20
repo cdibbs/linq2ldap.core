@@ -23,6 +23,9 @@ namespace Linq2Ldap.Core.Tests.FilterCompiler
         [LdapField("cn")]
         public string CommonName { get; set; }
 
+        [LdapField("distinguishedName")]
+        public string DistinguishedName { get; set; }
+
         [LdapField("id")]
         public LdapInt Id { get; set; }
 
@@ -31,5 +34,7 @@ namespace Linq2Ldap.Core.Tests.FilterCompiler
 
         [LdapField(" we ird  ")]
         public LdapString WeirdName { get; set; }
+
+
     }
 }

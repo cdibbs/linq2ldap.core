@@ -46,6 +46,13 @@ namespace Linq2Ldap.Core.Tests.FilterCompiler
         }
 
         [Fact]
+        public void Compile_ValueWithGermanUmlauts() {
+            Expression<Func<TestLdapModel, bool>> expr = e => e.DistinguishedName == "CN=Domänen-Admins,CN=Users,DC=domain,DC=de";
+            var filter = FilterCompiler.Compile(expr);
+            Assert.Equal(@"(distinguishedName=CN=Dom\c3\a4nen-Admins,CN=Users,DC=domain,DC=de)", filter);
+        }
+
+        [Fact]
         public void _MemberToString_DataSourceModel_SerializesByColumnAttrWhenAvailable()
         {
             Expression<Func<TestLdapModel, bool>> expr1 = (TestLdapModel u) => u.SamAccountName == "something";

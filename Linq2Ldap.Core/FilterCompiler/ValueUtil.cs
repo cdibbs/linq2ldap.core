@@ -1,6 +1,7 @@
 using Linq2Ldap.Core.FilterCompiler.Models;
 using Linq2Ldap.Core.FilterParser.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -26,15 +27,10 @@ namespace Linq2Ldap.Core.FilterCompiler {
 
         internal protected string Rfc4515Escape(string value)
         {
-            var result = value.Replace(@"\", @"\5c");
-            result = result.Replace("\0", @"\00");
-            result = result.Replace(@"(", @"\28");
-            result = result.Replace(@")", @"\29");
-            result = result.Replace(@"*", @"\2a");
-            char maxUnescaped = Convert.ToChar(0x7f);
-            result = string.Join("", result
-                .Select(c => c > maxUnescaped ? $"\\{c:00X}" : Encoding.UTF8.GetString(new[] { (byte)c }))
-                .ToList());
+            var result = new string(value
+                .SelectMany(EscapeUtf1Subset)
+                .ToArray());
+
             var left = result.TrimStart(' ');
             var right = result.TrimEnd(' ');
             var middle = result.Trim(' ');
@@ -45,6 +41,27 @@ namespace Linq2Ldap.Core.FilterCompiler {
             }
             right = string.Concat(Enumerable.Repeat(@"\20", result.Length - right.Length));
             return left + middle + right;
+        }
+
+        private static IEnumerable<char> EscapeUtf1Subset(char c)
+        {
+            if (c >= 0x01 && c <= 0x27 ||
+                c >= 0x2B && c <= 0x5B ||
+                c >= 0x5D && c <= 0x7F)
+            {
+                // https://tools.ietf.org/search/rfc4515#page-4 - see 'UTF1SUBSET'
+                yield return c;
+            }
+            else
+            {
+                // https://tools.ietf.org/search/rfc4515#page-4 - see 'escaped'
+                foreach (var @byte in Encoding.UTF8.GetBytes(new[] { c }))
+                {
+                    yield return '\\';
+                    yield return ((@byte & 0xF0) >> 4).ToString("x")[0];
+                    yield return (@byte & 0x0F).ToString("x")[0];
+                }
+            }
         }
 
         internal protected string LegacyEscape(string value)
