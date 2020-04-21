@@ -11,7 +11,7 @@
     <RepositoryUrl>https://github.com/cdibbs/linq2ldap</RepositoryUrl>
     <PackageLicenseUrl>https://github.com/cdibbs/linq2ldap/blob/master/LICENSE</PackageLicenseUrl>
     <Authors>Chris Dibbern</Authors>
-    <PackageReleaseNotes>Fixing bug in attr.Matches/Approx. Adding .Any() shorthand.</PackageReleaseNotes>
+    <PackageReleaseNotes>Adding UTF1 support to LDAP compiler.</PackageReleaseNotes>
     <PackageTags>LDAP;LINQ;Expression;Compiler;Parser;AD;Active Directory;OpenLDAP</PackageTags>
     <LangVersion>7.1</LangVersion>
   </PropertyGroup>
