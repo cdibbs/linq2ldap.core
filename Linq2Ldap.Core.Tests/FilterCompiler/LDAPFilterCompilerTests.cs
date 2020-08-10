@@ -186,13 +186,8 @@ namespace Linq2Ldap.Core.Tests.FilterCompiler
         {
             var guid = new Guid("96AA667A-E58E-486D-9114-CB1EDC5E2B0D");
             Expression<Func<TestLdapModel, bool>> expr = e => e.ObjectGuid == guid;
-
             var filter = FilterCompiler.Compile(expr);
-
-            var bytes = guid.ToByteArray();
-            
-            var ldapGuid = string.Join("", bytes.Select(b => $"\\{b:x2}"));
-            Assert.Equal($@"(objectGUID={ldapGuid})", filter);
+            Assert.Equal($@"(objectGUID=\7a\66\aa\96\8e\e5\6d\48\91\14\cb\1e\dc\5e\2b\0d)", filter);
         }
     }
 
