@@ -11,13 +11,13 @@ namespace Linq2Ldap.Core.ExtensionMethods
         /// <summary>
         /// Return a string of bytes of the source GUID
         /// </summary>
-        /// <param name="guid">The GUID to convert</param>
+        /// <param name="guid">The GUID to return</param>
         /// <returns></returns>
         public static string ToEscapedBytesString(this Guid guid) => 
             guid.ToByteArray().ToEscapedBytesString();
 
         /// <summary>
-        /// Return a string of bytes of the source GUID
+        /// Return a string of bytes of the source bytes array
         /// </summary>
         /// <param name="array">The bytes to return</param>
         /// <returns></returns>
