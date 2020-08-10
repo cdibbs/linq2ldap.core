@@ -13,9 +13,15 @@ namespace Linq2Ldap.Core.ExtensionMethods
         /// </summary>
         /// <param name="guid">The GUID to convert</param>
         /// <returns></returns>
-        public static object ToEscapedBytesString(this Guid guid)
-        {
-            return string.Join("", guid.ToByteArray().Select(b => $"\\{b:x2}"));
-        }
+        public static string ToEscapedBytesString(this Guid guid) => 
+            guid.ToByteArray().ToEscapedBytesString();
+
+        /// <summary>
+        /// Return a string of bytes of the source GUID
+        /// </summary>
+        /// <param name="array">The bytes to return</param>
+        /// <returns></returns>
+        public static string ToEscapedBytesString(this byte[] array) => 
+            string.Join("", array.Select(b => $"\\{b:x2}"));
     }
 }

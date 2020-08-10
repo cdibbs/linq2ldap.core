@@ -227,8 +227,20 @@ namespace Linq2Ldap.Core.FilterCompiler
 
         public string EvalExpr(
             Expression expr, IReadOnlyCollection<ParameterExpression> p)
-            => ValueUtil.EscapeFilterValue(RawEvalExpr(expr, p).ToString());
+            => Convert(RawEvalExpr(expr, p));
 
+        private string Convert(object rawValue)
+        {
+            switch (rawValue)
+            {
+                case Guid guid:
+                    return guid.ToEscapedBytesString();
+                case byte[] byteArray:
+                    return byteArray.ToEscapedBytesString();
+                default:
+                    return ValueUtil.EscapeFilterValue(rawValue.ToString());
+            }
+        }
 
         public object RawEvalExpr(
             Expression expr, IReadOnlyCollection<ParameterExpression> p)
@@ -238,9 +250,7 @@ namespace Linq2Ldap.Core.FilterCompiler
                 case ExpressionType.Constant:
                     return _ConstExprToString(expr, p);
                 case ExpressionType.MemberAccess:
-                    var member = expr.Type != typeof(Guid) 
-                        ? Expression.Convert(expr, typeof(object)) 
-                        : Expression.Convert(expr, typeof(object), typeof(GuidExtensions).GetMethod("ToEscapedBytesString"));
+                    var member = Expression.Convert(expr, typeof(object));
                     var getterLambda = Expression.Lambda<Func<object>>(member);
                     var getter = getterLambda.Compile();
                     return getter();
