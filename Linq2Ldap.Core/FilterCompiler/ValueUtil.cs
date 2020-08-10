@@ -47,7 +47,8 @@ namespace Linq2Ldap.Core.FilterCompiler {
         {
             if (c >= 0x01 && c <= 0x27 ||
                 c >= 0x2B && c <= 0x5B ||
-                c >= 0x5D && c <= 0x7F)
+                c >= 0x5D && c <= 0x7F ||
+                c == 0x5C)
             {
                 // https://tools.ietf.org/search/rfc4515#page-4 - see 'UTF1SUBSET'
                 yield return c;

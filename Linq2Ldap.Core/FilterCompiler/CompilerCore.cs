@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using Linq2Ldap.Core.Attributes;
+using Linq2Ldap.Core.ExtensionMethods;
 using Linq2Ldap.Core.FilterCompiler.Models;
 using Linq2Ldap.Core.Models;
 using Linq2Ldap.Core.Proxies;
@@ -237,8 +238,10 @@ namespace Linq2Ldap.Core.FilterCompiler
                 case ExpressionType.Constant:
                     return _ConstExprToString(expr, p);
                 case ExpressionType.MemberAccess:
-                    var objectMember = Expression.Convert(expr, typeof(object));
-                    var getterLambda = Expression.Lambda<Func<object>>(objectMember);
+                    var member = expr.Type != typeof(Guid) 
+                        ? Expression.Convert(expr, typeof(object)) 
+                        : Expression.Convert(expr, typeof(object), typeof(GuidExtensions).GetMethod("ToEscapedBytesString"));
+                    var getterLambda = Expression.Lambda<Func<object>>(member);
                     var getter = getterLambda.Compile();
                     return getter();
                 default:
@@ -246,7 +249,7 @@ namespace Linq2Ldap.Core.FilterCompiler
                         $"Linq-to-LDAP value access not implemented for type {expr.NodeType}.");
             }
         }
-
+        
         internal string _Negate(string exprStr) => $"(!{exprStr})";
 
         internal string _ComparisonExprToString(

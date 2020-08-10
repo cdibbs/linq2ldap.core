@@ -1,3 +1,4 @@
+using System;
 using Linq2Ldap.Core.Attributes;
 using Linq2Ldap.Core.Models;
 using Linq2Ldap.Core.Types;
@@ -35,6 +36,7 @@ namespace Linq2Ldap.Core.Tests.FilterCompiler
         [LdapField(" we ird  ")]
         public LdapString WeirdName { get; set; }
 
-
+        [LdapField("objectGUID")]
+        public Guid ObjectGuid { get; set; }
     }
 }

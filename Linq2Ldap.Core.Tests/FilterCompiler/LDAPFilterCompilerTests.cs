@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using Linq2Ldap.Core.FilterCompiler;
@@ -178,6 +179,20 @@ namespace Linq2Ldap.Core.Tests.FilterCompiler
             var ex = Assert.Throws<InvalidOperationException>(() => FilterCompiler.Compile(expr));
             Assert.Contains("Right side", ex.Message);
             Assert.Contains("must be a constant", ex.Message);
+        }
+
+        [Fact]
+        public void Compile_SearchWithObjectGUIDAsByteArray()
+        {
+            var guid = new Guid("96AA667A-E58E-486D-9114-CB1EDC5E2B0D");
+            Expression<Func<TestLdapModel, bool>> expr = e => e.ObjectGuid == guid;
+
+            var filter = FilterCompiler.Compile(expr);
+
+            var bytes = guid.ToByteArray();
+            
+            var ldapGuid = string.Join("", bytes.Select(b => $"\\{b:x2}"));
+            Assert.Equal($@"(objectGUID={ldapGuid})", filter);
         }
     }
 
