@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Linq;
-using System.Linq.Expressions;
 using Linq2Ldap.Core.ExtensionMethods;
-using Linq2Ldap.Core.Tests.FilterCompiler;
 using Xunit;
 
 namespace Linq2Ldap.Core.Tests.ExtensionMethods
