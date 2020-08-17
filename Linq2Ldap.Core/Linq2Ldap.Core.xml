@@ -17,6 +17,25 @@
             <param name="name">The name within the LDAP attributes dictionary.</param>
             <param name="optional">Whether this attribute is optional (default: false, throws when missing).</param>
         </member>
+        <member name="T:Linq2Ldap.Core.ExtensionMethods.GuidExtensions">
+            <summary>
+            Helper class for working with GUID
+            </summary>
+        </member>
+        <member name="M:Linq2Ldap.Core.ExtensionMethods.GuidExtensions.ToEscapedBytesString(System.Guid)">
+            <summary>
+            Return a string of bytes of the source GUID
+            </summary>
+            <param name="guid">The GUID to return</param>
+            <returns></returns>
+        </member>
+        <member name="M:Linq2Ldap.Core.ExtensionMethods.GuidExtensions.ToEscapedBytesString(System.Byte[])">
+            <summary>
+            Return a string of bytes of the source bytes array
+            </summary>
+            <param name="array">The bytes to return</param>
+            <returns></returns>
+        </member>
         <member name="T:Linq2Ldap.Core.ExtensionMethods.PropertyExtensions">
              <summary>
              These methods could not have been implemented as instance methods, since

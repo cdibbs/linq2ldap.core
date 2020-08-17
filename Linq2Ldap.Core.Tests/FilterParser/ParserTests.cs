@@ -157,5 +157,15 @@ namespace Linq2Ldap.Core.Tests.FilterParser {
             var right = (bin.Right as ConstantExpression).Value;
             Assert.Equal(expected, right);
         }
+
+        [InlineData(@"(objectGUID=\7a\66\aa\96\8e\e5\6d\48\91\14\cb\1e\dc\5e\2b\0d)", "7a66aa968ee56d489114cb1edc5e2b0d")]
+        [Theory]
+        public void Parse_DoesntChokeOnGuids(string testStr, string expected) // TODO: parse guids, and in general improve type support when parsing.
+        {
+            var expr = Parser.Parse<Entry>(testStr);
+            var bin = expr.Body as BinaryExpression;
+            var right = (bin.Right as ConstantExpression).Value;
+            Assert.Equal(expected, right);
+        }
     }
 }

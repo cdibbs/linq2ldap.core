@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.2] - 2020-08-16
+### Added
+ - Test to check that GUIDs parse without error (albeit to a string).
+
+### Changed
+ - Fixed GUID serialization via PR/3.
+
 ## [1.6.1] - 2020-04-20
 ### Added
  - This changelog.md file.
