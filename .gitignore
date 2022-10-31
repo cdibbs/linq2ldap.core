@@ -37,3 +37,4 @@ node_modules
 coverage.json
 report
 coverage.opencover.xml
+/Linq2Ldap.Core.Tests/TestResults/b04321c1-fd2a-44bc-a94f-fadcfd7cb127

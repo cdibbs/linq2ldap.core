@@ -25,13 +25,13 @@ build_script:
   - cmd: dotnet publish ./Linq2Ldap.Core.sln
 
 test_script:
-  - ps: dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=./ Linq2Ldap.Core.sln
+  - ps: dotnet test .\Linq2Ldap.Core.sln --collect "XPlat Code Coverage" --settings .\coverlet.runsettings
 
 after_test:
   - ps: |
       $env:PATH = 'C:\msys64\usr\bin;' + $env:PATH
       Invoke-WebRequest -Uri 'https://codecov.io/bash' -OutFile codecov.sh
-      bash codecov.sh -f "*.Tests/coverage.opencover.xml"
+      bash codecov.sh -f "*.Tests/TestResults/**/coverage.opencover.xml"
   - dotnet pack ./Linq2Ldap.Core/ -c Release
 
 artifacts:
